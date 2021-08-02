@@ -1,23 +1,38 @@
-interface Project {
-    id: number
+interface AddProject {
     name: string
     desc?: string
 }
 
-interface ProjectServer {
+interface Project extends AddProject {
     id: number
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+interface AddProjectServer {
     envName: string
     baseUrl: string
 }
 
-interface ProjectEnvVariable {
+interface ProjectServer extends AddProjectServer {
     id: number
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+interface AddProjectEnvVariable {
     variableName: string
     defaultValue: string
 }
 
-interface ProjectRequest {
+interface ProjectEnvVariable extends AddProjectEnvVariable {
     id: number
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+interface ProjectRequestMini {
+    name: string
     path: string
     method: string
     contentType: string
@@ -26,8 +41,39 @@ interface ProjectRequest {
     timeout: number
 }
 
-interface ProjectRequestResponse {
-    id: number
+interface ProjectRequestResponseMini {
     fieldName: string
     fieldPath: string
+}
+
+interface ProjectRequest extends ProjectRequestMini {
+    id: number
+}
+
+interface ProjectRequestResponse extends ProjectRequestResponseMini {
+    id: number
+}
+
+interface AddProjectRequest extends ProjectRequestMini, ProjectRequestResponseMini {
+}
+
+interface DetailProjectRequest extends ProjectRequest, ProjectRequestResponseMini {
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+export {
+    AddProject,
+    Project,
+
+    AddProjectServer,
+    ProjectServer,
+
+    AddProjectEnvVariable,
+    ProjectEnvVariable,
+
+    AddProjectRequest,
+    ProjectRequest,
+    DetailProjectRequest
 }
