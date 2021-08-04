@@ -55,8 +55,8 @@
       <el-table-column prop="request.param" label="接口参数"></el-table-column>
       <el-table-column label="响应验证字段">
         <template #default="scope">
-          <span v-for="v in scope.row.request.responseFieldValidate">
-            {{ v.fieldName }}: {{ v.fieldPath }}
+          <span v-for="v in scope.row.responseFieldValidate">
+            <el-tag effect="plain" class="responseFieldValidateTag">{{ v.fieldName }}: {{ v.fieldPath }}</el-tag> <br />
           </span>
         </template>
       </el-table-column>
@@ -172,5 +172,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.responseFieldValidateTag {
+  margin-bottom: 6px;
+}
 </style>
