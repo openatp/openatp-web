@@ -110,6 +110,11 @@ async function listProjectRequest(projectId: number): Promise<Array<ProjectReque
     return (resp.data as Response<Array<ProjectRequest>>).data ?? []
 }
 
+async function detailProjectRequest(id: number): Promise<ProjectRequest> {
+    const resp = await request.get(`/api/project/request/v1/detail/${id}`)
+    return resp.data.data as ProjectRequest
+}
+
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 

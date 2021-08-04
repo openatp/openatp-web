@@ -1,5 +1,5 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="showAddProjectEnvVariableDialog = true">新建服务器</el-button>
+  <el-button type="primary" icon="el-icon-plus" @click="showAddProjectEnvVariableDialog = true">新建环境变量</el-button>
   <el-dialog title="新建环境变量" v-model="showAddProjectEnvVariableDialog">
     <div>
       <el-input placeholder="请输入变量名称" clearable v-model="addNewProjectEnvVariable.variableName"></el-input>
@@ -42,8 +42,8 @@ import {
   deleteProjectEnvVariable,
   updateProjectEnvVariable,
   allProjectEnvVariable
-} from "../api/project";
-import {AddProjectEnvVariable, ProjectEnvVariable} from "../api/model/project";
+} from "../../api/project";
+import {AddProjectEnvVariable, ProjectEnvVariable} from "../../api/model/project";
 
 export default defineComponent({
   name: "ProjectEnvVariableList",

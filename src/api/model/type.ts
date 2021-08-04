@@ -8,7 +8,7 @@ interface HttpContentType {
     value: string
 }
 
-const httpMethod = [
+const httpMethods: Array<HttpMethod> = [
     {
         label: 'GET',
         value: 'GET'
@@ -27,7 +27,7 @@ const httpMethod = [
     }
 ]
 
-const httpContentType = [
+const httpContentTypes: Array<HttpContentType> = [
     {
         label: 'JSON',
         value: 'JSON'
@@ -38,7 +38,34 @@ const httpContentType = [
     },
 ]
 
+interface TestCaseType {
+    label: string
+    value: string
+}
+
+const testCaseTypeBenchmark = "benchmark"
+const testCaseTypeReplay = "replay"
+const testCaseTypePipeline = "pipeline"
+
+const testCaseTypes: Array<TestCaseType> = [
+    {
+        label: '性能测试',
+        value: testCaseTypeBenchmark
+    },
+    {
+        label: '叠放测试',
+        value: testCaseTypeReplay
+    },
+    {
+        label: '顺序测试',
+        value: testCaseTypePipeline
+    }
+]
+
 export {
     HttpMethod, HttpContentType,
-    httpMethod, httpContentType
+    httpMethods, httpContentTypes,
+    TestCaseType,
+    testCaseTypeBenchmark, testCaseTypeReplay, testCaseTypePipeline,
+    testCaseTypes
 }

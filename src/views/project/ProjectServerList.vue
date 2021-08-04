@@ -1,6 +1,6 @@
 <template>
   <el-button type="primary" icon="el-icon-plus" @click="showAddProjectServerDialog = true">新建服务器</el-button>
-  <el-dialog title="新建项目" v-model="showAddProjectServerDialog">
+  <el-dialog title="新建服务器" v-model="showAddProjectServerDialog">
     <div>
       <el-input placeholder="请输入服务器名称" clearable v-model="addNewProjectServer.envName"></el-input>
       <el-input placeholder="请输入服务器地址" clearable v-model="addNewProjectServer.baseUrl"></el-input>
@@ -36,13 +36,13 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref, reactive, Ref} from "vue"
 import {useRoute} from "vue-router"
-import {AddProjectServer, ProjectServer} from "../api/model/project"
+import {AddProjectServer, ProjectServer} from "../../api/model/project"
 import {
   addProjectServer,
   deleteProjectServer,
   updateProjectServer,
   allProjectServer
-} from "../api/project"
+} from "../../api/project"
 
 export default defineComponent({
   name: "ProjectServerList",

@@ -42,6 +42,7 @@ interface ProjectRequestMini {
 }
 
 interface ProjectRequestResponseMini {
+    id: number
     fieldName: string
     fieldPath: string
 }

@@ -73,9 +73,9 @@
 <script lang="ts">
 import {defineComponent, onMounted, reactive, ref, Ref} from "vue"
 import {useRoute} from "vue-router"
-import {useHttpContentType, useHttpMethod} from "../hooks/use_http";
-import {AddProjectRequest, ProjectRequest} from "../api/model/project"
-import {addProjectRequest, deleteProjectRequest, listProjectRequest} from "../api/project"
+import {useHttpContentTypes, useHttpMethods} from "../../hooks/use_type"
+import {AddProjectRequest, ProjectRequest} from "../../api/model/project"
+import {addProjectRequest, deleteProjectRequest, listProjectRequest} from "../../api/project"
 
 export default defineComponent({
   name: "ProjectRequestList",
@@ -84,8 +84,8 @@ export default defineComponent({
     const projectId = route.params.projectId as unknown as number
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
-    const httpMethods = useHttpMethod()
-    const httpContentTypes = useHttpContentType()
+    const httpMethods = useHttpMethods()
+    const httpContentTypes = useHttpContentTypes()
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
     const projectRequests: Ref<Array<ProjectRequest>> = ref([])
@@ -154,9 +154,6 @@ export default defineComponent({
     })
 
     return {
-      httpMethods,
-      httpContentTypes,
-
       projectRequests,
 
       showAddProjectRequestDialog,
@@ -165,7 +162,10 @@ export default defineComponent({
       clickToAdd,
 
       clickToDelete,
-      clickToUpdate
+      clickToUpdate,
+
+      httpMethods,
+      httpContentTypes
     }
   }
 })

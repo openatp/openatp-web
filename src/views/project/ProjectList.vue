@@ -23,9 +23,10 @@
       <el-card class="list-item">
         <h4>{{ project.name }}</h4>
         {{ project.desc }} <br/>
-        <el-button icon="el-icon-cpu" @click="openProjectServer(project.id)">服务器</el-button>
-        <el-button icon="el-icon-office-building" @click="openProjectEnvVariable(project.id)">环境变量</el-button>
-        <el-button type="danger" icon="el-icon-s-operation" @click="openProjectRequestList(project.id)"></el-button>
+        <el-button icon="el-icon-cpu" @click="openProjectServer(project.id)">服务器配置</el-button>
+        <el-button icon="el-icon-office-building" @click="openProjectEnvVariable(project.id)">环境变量配置</el-button>
+        <el-button icon="el-icon-s-operation" @click="openProjectRequestList(project.id)">请求配置</el-button>
+        <el-button icon="el-icon-aim" @click="openTestCaseList(project.id)">测试案例列表</el-button>
         <el-button type="danger" icon="el-icon-delete" @click="clickToDelete(project.id)"></el-button>
       </el-card>
     </div>
@@ -35,12 +36,12 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref, reactive, Ref} from "vue"
 import {useRouter} from "vue-router"
-import {AddProject, Project} from "../api/model/project"
+import {AddProject, Project} from "../../api/model/project"
 import {
   addProject,
   deleteProject,
   listProject
-} from "../api/project"
+} from "../../api/project"
 
 export default defineComponent({
   name: "ProjectList",
@@ -81,15 +82,19 @@ export default defineComponent({
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
     function openProjectServer(projectId: number) {
-      router.push(`/server/${projectId}`)
+      router.push(`/project/server/${projectId}`)
     }
 
     function openProjectEnvVariable(projectId: number) {
-      router.push(`/env_variable/${projectId}`)
+      router.push(`/project/env_variable/${projectId}`)
     }
 
     function openProjectRequestList(projectId: number) {
-      router.push(`/request/${projectId}`)
+      router.push(`/project/request/${projectId}`)
+    }
+
+    function openTestCaseList(projectId: number) {
+      router.push(`/testcase/${projectId}`)
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -109,7 +114,8 @@ export default defineComponent({
 
       openProjectServer,
       openProjectEnvVariable,
-      openProjectRequestList
+      openProjectRequestList,
+      openTestCaseList
     }
   }
 })
