@@ -1,16 +1,14 @@
 import request from "./axios-port"
-
 import Response from './model/basic-response'
 import {
     AddProject,
     Project,
-    AddProjectServer,
-    ProjectServer,
     AddProjectEnvVariable,
     ProjectEnvVariable,
     AddProjectRequest,
     ProjectRequest,
-    DetailProjectRequest
+    AddProjectServer,
+    ProjectServer
 } from './model/project'
 
 async function addProject(req: AddProject): Promise<boolean> {
@@ -44,7 +42,7 @@ async function updateProject(req: Project) {
 
 async function listProject(): Promise<Array<Project>> {
     const resp = await request.get("/api/project/v1/list")
-    return (resp.data as Response<Array<Project>>).data
+    return (resp.data as Response<Array<Project>>).data ?? []
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -67,7 +65,7 @@ async function updateProjectServer(req: ProjectServer) {
 
 async function allProjectServer(projectId: number): Promise<Array<ProjectServer>> {
     const resp = await request.get(`/api/project/server/v1/all/${projectId}`)
-    return (resp.data as Response<Array<ProjectServer>>).data
+    return (resp.data as Response<Array<ProjectServer>>).data ?? []
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -90,7 +88,7 @@ async function updateProjectEnvVariable(req: ProjectEnvVariable) {
 
 async function allProjectEnvVariable(projectId: number): Promise<Array<ProjectEnvVariable>> {
     const resp = await request.get(`/api/project/env_variable/v1/all/${projectId}`)
-    return (resp.data as Response<Array<ProjectEnvVariable>>).data
+    return (resp.data as Response<Array<ProjectEnvVariable>>).data ?? []
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -109,12 +107,7 @@ async function deleteProjectRequest(id: number) {
 
 async function listProjectRequest(projectId: number): Promise<Array<ProjectRequest>> {
     const resp = await request.get(`/api/project/request/v1/list/${projectId}`)
-    return (resp.data as Response<Array<ProjectRequest>>).data
-}
-
-async function detailProjectRequest(id: number): Promise<DetailProjectRequest> {
-    const resp = await request.get(`/api/project/request/v1/detail/${id}`)
-    return (resp.data as Response<DetailProjectRequest>).data
+    return (resp.data as Response<Array<ProjectRequest>>).data ?? []
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -140,5 +133,4 @@ export {
     deleteProjectRequest,
     // updateProjectRequest,
     listProjectRequest,
-    detailProjectRequest
 }

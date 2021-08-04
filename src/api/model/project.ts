@@ -46,18 +46,13 @@ interface ProjectRequestResponseMini {
     fieldPath: string
 }
 
-interface ProjectRequest extends ProjectRequestMini {
+interface AddProjectRequest {
+    request: ProjectRequestMini
+    responseFieldValidate?: Array<ProjectRequestResponseMini>
+}
+
+interface ProjectRequest extends AddProjectRequest {
     id: number
-}
-
-interface ProjectRequestResponse extends ProjectRequestResponseMini {
-    id: number
-}
-
-interface AddProjectRequest extends ProjectRequestMini, ProjectRequestResponseMini {
-}
-
-interface DetailProjectRequest extends ProjectRequest, ProjectRequestResponseMini {
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -74,6 +69,5 @@ export {
     ProjectEnvVariable,
 
     AddProjectRequest,
-    ProjectRequest,
-    DetailProjectRequest
+    ProjectRequest
 }

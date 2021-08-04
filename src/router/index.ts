@@ -1,6 +1,8 @@
 import {createRouter, createWebHashHistory} from "vue-router"
 import ProjectList from "../components/ProjectList.vue"
 import ProjectServerList from "../components/ProjectServerList.vue"
+import ProjectEnvVariableList from "../components/ProjectEnvVariableList.vue"
+import ProjectRequestList from "../components/ProjectRequestList.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -12,6 +14,14 @@ const router = createRouter({
         {
             path: '/server/:projectId',
             component: ProjectServerList
+        },
+        {
+            path: '/env_variable/:projectId',
+            component: ProjectEnvVariableList
+        },
+        {
+            path: '/request/:projectId',
+            component: ProjectRequestList
         },
         {
             path: '/testcase',
