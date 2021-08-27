@@ -11,7 +11,7 @@ interface Project extends AddProject {
 
 interface AddProjectServer {
     serverName: string
-    baseUrl: string
+    serverAddr: string
 }
 
 interface ProjectServer extends AddProjectServer {

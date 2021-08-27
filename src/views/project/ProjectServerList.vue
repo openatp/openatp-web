@@ -3,7 +3,7 @@
   <el-dialog title="新建服务器" v-model="showAddProjectServerDialog">
     <div>
       <el-input placeholder="请输入服务器名称" clearable v-model="addNewProjectServer.serverName"></el-input>
-      <el-input placeholder="请输入服务器地址" clearable v-model="addNewProjectServer.baseUrl"></el-input>
+      <el-input placeholder="请输入服务器地址" clearable v-model="addNewProjectServer.serverAddr"></el-input>
     </div>
     <template #footer>
       <span class="dialog-footer">
@@ -64,7 +64,7 @@ export default defineComponent({
     const showAddProjectServerDialog = ref(false)
     const addNewProjectServer = reactive<AddProjectServer>({
       serverName: '',
-      baseUrl: ''
+      serverAddr: ''
     })
 
     async function clickToAdd() {
@@ -75,7 +75,7 @@ export default defineComponent({
       // 重置
       showAddProjectServerDialog.value = false
       addNewProjectServer.serverName = ''
-      addNewProjectServer.baseUrl = ''
+      addNewProjectServer.serverAddr = ''
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
