@@ -10,7 +10,7 @@ interface Project extends AddProject {
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
 interface AddProjectServer {
-    envName: string
+    serverName: string
     baseUrl: string
 }
 

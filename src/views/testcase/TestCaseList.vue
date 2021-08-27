@@ -51,7 +51,7 @@
 
         <el-popover placement="top" v-model:visible="showStartExecuteDialog">
           <el-button type="primary" v-for="server in projectServerList" @click="startExecute(testCase.id, server.id)">
-            {{ server.envName }}
+            {{ server.serverName }}
           </el-button>
           <template #reference>
             <el-button type="warning" icon="el-icon-video-play" @click="showStartExecuteDialog = true">开始执行</el-button>

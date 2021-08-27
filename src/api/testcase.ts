@@ -16,11 +16,8 @@ async function deleteTestCase(id: number) {
     await request.delete(`/api/testcase/v1/${id}`)
 }
 
-async function updateTestCase(req: TestCase) {
-    await request.put(`/api/testcase/v1/${req.id}`, {
-        name: req.name,
-        type: req.type
-    })
+async function updateTestCase(testCaseId: number, req: AddTestCase) {
+    await request.put(`/api/testcase/v1/${testCaseId}`, req)
 }
 
 async function listTestCase(projectId: number): Promise<Array<TestCase>> {
@@ -45,9 +42,8 @@ async function deleteTestCaseRequest(id: number) {
     await request.delete(`/api/testcase/request/v1/${id}`)
 }
 
-async function updateTestCaseRequest(req: TestCase) {
-    await request.put(`/api/testcase/request/v1/${req.id}`, req)
-    // TODO 属性太多了，直接使用 req 会多一个 id 属性，有影响吗？
+async function updateTestCaseRequest(testCaseRequestId: number, req: AddTestCaseRequest) {
+    await request.put(`/api/testcase/request/v1/${testCaseRequestId}`, req)
 }
 
 async function listTestCaseRequest(testCaseId: number): Promise<Array<TestCaseRequest>> {
@@ -70,7 +66,7 @@ async function listTestCaseExecuteHistory(testCaseId: number): Promise<Array<Tes
 
 async function listTestCaseExecuteDetail(testCaseExecuteHistoryId: string): Promise<Array<TestCaseExecuteDetail>> {
     const resp = await request.get(`/api/testcase/execute/v1/detail/${testCaseExecuteHistoryId}`)
-    return resp.data.data as Array<TestCaseExecuteDetail>
+    return resp.data.data as Array<TestCaseExecuteDetail> ?? []
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---

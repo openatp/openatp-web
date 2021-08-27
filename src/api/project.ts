@@ -13,10 +13,7 @@ import {
 
 async function addProject(req: AddProject): Promise<boolean> {
     try {
-        const resp = await request.post("/api/project/v1", {
-            name: req.name,
-            desc: req.desc
-        })
+        const resp = await request.post("/api/project/v1", req)
         console.log(`addProject: ${resp}`)
         return true
     } catch (e) {
@@ -36,8 +33,8 @@ async function deleteProject(id: number) {
     await request.delete(`/api/project/v1/${id}`)
 }
 
-async function updateProject(req: Project) {
-    await request.put(`/project/v1/${req.id}`, {name: req.name, desc: req.desc})
+async function updateProject(projectId: number, req: AddProject) {
+    await request.put(`/project/v1/${projectId}`, req)
 }
 
 async function listProject(): Promise<Array<Project>> {
@@ -56,11 +53,8 @@ async function deleteProjectServer(id: number) {
     await request.delete(`/api/project/server/v1/${id}`)
 }
 
-async function updateProjectServer(req: ProjectServer) {
-    await request.put(`/api/project/server/v1/${req.id}`, {
-        envName: req.envName,
-        baseUrl: req.baseUrl
-    })
+async function updateProjectServer(projectServerId: number, req: AddProjectServer) {
+    await request.put(`/api/project/server/v1/${projectServerId}`, req)
 }
 
 async function allProjectServer(projectId: number): Promise<Array<ProjectServer>> {
@@ -79,11 +73,8 @@ async function deleteProjectEnvVariable(id: number) {
     await request.delete(`/api/project/env_variable/v1/${id}`)
 }
 
-async function updateProjectEnvVariable(req: ProjectEnvVariable) {
-    await request.put(`/api/project/env_variable/v1/${req.id}`, {
-        variableName: req.variableName,
-        defaultValue: req.defaultValue
-    })
+async function updateProjectEnvVariable(projectEnvId: number, req: AddProjectEnvVariable) {
+    await request.put(`/api/project/env_variable/v1/${projectEnvId}`, req)
 }
 
 async function allProjectEnvVariable(projectId: number): Promise<Array<ProjectEnvVariable>> {
