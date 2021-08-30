@@ -1,36 +1,52 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例请求</el-button>
-  <el-dialog title="新建测试案例请求" v-model="showAddTestCaseRequestDialog">
-    <div>
-      <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
-      <el-select placeholder="请选择测试案例参数" v-model="addNewTestCaseRequestBindProjectRequestId">
-        <el-option
-            v-for="item in projectRequestList"
-            :key="item.id"
-            :label="item.request.name"
-            :value="item.id">
-        </el-option>
-      </el-select>
-      <el-input placeholder="请输入测试案例参数" type="textarea" rows="4" clearable
-                v-model="addNewTestCaseRequest.request.param"></el-input>
+  <div v-if="testCaseType === testCaseTypeReplay">
+    <a :href="`/api/testcase/replay/request/batch_import/v1/download_template/excel/${testCaseId}`">
+      <el-button icon="el-icon-download">下载请求模版</el-button>
+    </a>
+    <el-upload
+        :action="`/api/testcase/replay/request/batch_import/v1/upload_file/excel/${testCaseId}`"
+        name="file"
+        :show-file-list="false"
+        limit="1"
+        :on-success="uploadRequestTemplateSuccess"
+        :on-error="uploadRequestTemplateFailed">
+      <el-button icon="el-icon-upload">上传请求模板</el-button>
+    </el-upload>
+  </div>
+  <div
+      v-else-if="testCaseType===testCaseTypePipeline || (testCaseType === testCaseTypeBenchmark && testCaseRequests.length === 0)">
+    <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例请求</el-button>
+    <el-dialog title="新建测试案例请求" v-model="showAddTestCaseRequestDialog">
+      <div>
+        <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
+        <el-select placeholder="请选择测试案例参数" v-model="addNewTestCaseRequest.request.projectRequestId">
+          <el-option
+              v-for="item in projectRequestList"
+              :key="item.id"
+              :label="item.request.name"
+              :value="item.id">
+          </el-option>
+        </el-select>
+        <el-input placeholder="请输入测试案例参数" type="textarea" rows="4" clearable
+                  v-model="addNewTestCaseRequest.request.param"></el-input>
 
-      <span>响应结果验证：</span>
-      <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
-                :placeholder="execCheck.projectRequestResponseFieldName" clearable
-                v-model="execCheck.wantResponseFieldValue"></el-input>
+        <span>响应结果验证：</span>
+        <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
+                  :placeholder="execCheck.projectRequestResponseFieldName" clearable
+                  v-model="execCheck.wantResponseFieldValue"></el-input>
 
-      <span>环境变量赋值：</span>
-      <el-input v-for="env in addNewTestCaseRequest.requestSaveEnvVariable" :placeholder="env.projectEnvVariableName"
-                clearable v-model="env.projectEnvVariableValuePath"></el-input>
-    </div>
-    <template #footer>
+        <span>环境变量赋值：</span>
+        <el-input v-for="env in addNewTestCaseRequest.requestSaveEnvVariable" :placeholder="env.projectEnvVariableName"
+                  clearable v-model="env.projectEnvVariableValuePath"></el-input>
+      </div>
+      <template #footer>
       <span class="dialog-footer">
         <el-button @click="showAddTestCaseRequestDialog = false">取消</el-button>
         <el-button type="primary" @click="clickToAdd">保存</el-button>
       </span>
-    </template>
-  </el-dialog>
-
+      </template>
+    </el-dialog>
+  </div>
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
   <div v-if="testCaseRequests.length === 0">
@@ -73,6 +89,8 @@
 <script lang="ts">
 import {defineComponent, onMounted, reactive, ref, Ref, watch} from "vue"
 import {useRoute} from "vue-router"
+import {ElMessage} from 'element-plus'
+import {testCaseTypeReplay, testCaseTypeBenchmark, testCaseTypePipeline} from "../../api/model/type"
 import {AddTestCaseRequest, TestCaseRequest} from "../../api/model/testcase"
 import {addTestCaseRequest, deleteTestCaseRequest, listTestCaseRequest} from "../../api/testcase"
 import {ProjectEnvVariable, ProjectRequest} from "../../api/model/project"
@@ -84,6 +102,7 @@ export default defineComponent({
     const route = useRoute()
     const projectId = route.params.projectId as unknown as number
     const testCaseId = route.params.testCaseId as unknown as number
+    const testCaseType = route.query.type as unknown as string
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
@@ -102,7 +121,6 @@ export default defineComponent({
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
     const showAddTestCaseRequestDialog = ref(false)
-    const addNewTestCaseRequestBindProjectRequestId = ref(0)
     const addNewTestCaseRequest = reactive<AddTestCaseRequest>({
       request: {
         name: '',
@@ -113,20 +131,17 @@ export default defineComponent({
       requestSaveEnvVariable: []
     })
 
-    watch(addNewTestCaseRequestBindProjectRequestId, (newId, _) => {
+    watch(() => addNewTestCaseRequest.request.projectRequestId, (newId, _) => {
       // 先清空
       addNewTestCaseRequest.requestExecCheck = []
       // 再重新赋值
-      projectRequestList.value.filter(req => req.id === newId)[0].responseFieldValidate.forEach(field => {
+      projectRequestList.value.filter(req => req.id === newId)[0].responseFieldValidate?.forEach(field => {
         addNewTestCaseRequest.requestExecCheck?.push({
           projectRequestResponseId: field.id,
           projectRequestResponseFieldName: field.fieldName,
           wantResponseFieldValue: ""
         })
       })
-
-      // 更新 // TODO 有更好的方法吗？
-      addNewTestCaseRequest.request.projectRequestId = newId
     })
 
     async function clickToOpenAddDialog() {
@@ -169,6 +184,8 @@ export default defineComponent({
       addNewTestCaseRequest.request.param = undefined
       addNewTestCaseRequest.requestExecCheck = []
       addNewTestCaseRequest.requestSaveEnvVariable = []
+
+      showAddTestCaseRequestDialog.value = false
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -188,23 +205,45 @@ export default defineComponent({
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
+    function uploadRequestTemplateSuccess() {
+      ElMessage.success({
+        message: "上传成功"
+      })
+    }
+
+    function uploadRequestTemplateFailed() {
+      ElMessage.error({
+        message: "上传失败，请重试"
+      })
+    }
+
+    // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
     onMounted(() => {
       loadTestCaseRequest()
     })
 
     return {
+      testCaseTypeReplay,
+      testCaseTypeBenchmark,
+      testCaseTypePipeline,
+      testCaseType,
+      testCaseId,
+
       testCaseRequests,
 
       projectRequestList,
 
       showAddTestCaseRequestDialog,
-      addNewTestCaseRequestBindProjectRequestId,
       addNewTestCaseRequest,
       clickToOpenAddDialog,
       clickToAdd,
 
       clickToDelete,
-      clickToUpdate
+      clickToUpdate,
+
+      uploadRequestTemplateSuccess,
+      uploadRequestTemplateFailed,
     }
   }
 })

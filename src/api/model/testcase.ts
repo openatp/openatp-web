@@ -1,6 +1,7 @@
 interface AddTestCase {
     name: string
     type: string
+    projectRequestId?: number
 }
 
 interface TestCase extends AddTestCase {

@@ -1,5 +1,5 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="showAddTestCaseDialog = true">新建测试案例</el-button>
+  <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例</el-button>
   <el-dialog title="新建测试案例" v-model="showAddTestCaseDialog">
     <div>
       <el-input placeholder="请输入测试案例名称" clearable v-model="addNewTestCase.name"></el-input>
@@ -9,6 +9,14 @@
             :key="item.value"
             :label="item.label"
             :value="item.value">
+        </el-option>
+      </el-select>
+      <el-select v-show="addNewTestCaseSelectProjectRequest" placeholder="请选择关联的请求" v-model="addNewTestCase.projectRequestId">
+        <el-option
+            v-for="item in projectRequestList"
+            :key="item.id"
+            :label="item.request.name"
+            :value="item.id">
         </el-option>
       </el-select>
     </div>
@@ -30,24 +38,8 @@
       <el-card class="list-item">
         <h4>{{ testCase.name }}</h4>
         {{ testCase.type }} <br/>
-        <el-button icon="el-icon-s-operation" @click="openTestCaseRequestList(testCase.id)">测试案例请求配置</el-button>
-        <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">测试案例执行列表</el-button>
-
-        <a :href="`/api/testcase/replay/request/batch_import/v1/download_template/excel/${testCase.id}`"
-           v-if="testCase.type === testCaseTypeReplay">
-          <el-button icon="el-icon-download">下载请求模版</el-button>
-        </a>
-        <el-upload
-            :action="`/api/testcase/replay/request/batch_import/v1/upload_file/excel/${testCase.id}`"
-            name="file"
-            :show-file-list="false"
-            limit="1"
-            :on-success="uploadRequestTemplateSuccess"
-            :on-error="uploadRequestTemplateFailed">
-          <a v-if="testCase.type === testCaseTypeReplay">
-            <el-button icon="el-icon-upload">上传请求模板</el-button>
-          </a>
-        </el-upload>
+        <el-button icon="el-icon-s-operation" @click="openTestCaseRequestList(testCase.id, testCase.type)">请求配置</el-button>
+        <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">执行列表</el-button>
 
         <el-popover placement="top" v-model:visible="showStartExecuteDialog">
           <el-button type="primary" v-for="server in projectServerList" @click="startExecute(testCase.id, server.id)">
@@ -65,15 +57,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, Ref} from "vue"
+import {defineComponent, onMounted, reactive, ref, Ref, watch} from "vue"
 import {useRoute, useRouter} from "vue-router"
-import {ElMessage} from 'element-plus'
 import {useTestCaseTypes} from "../../hooks/use_type"
-import {testCaseTypeReplay} from "../../api/model/type"
+import {testCaseTypeReplay, testCaseTypeBenchmark} from "../../api/model/type"
+import {ProjectRequest, ProjectServer} from "../../api/model/project";
 import {AddTestCase, TestCase} from "../../api/model/testcase"
+import {allProjectEnvVariable, allProjectServer, listProjectRequest} from "../../api/project"
 import {addTestCase, deleteTestCase, listTestCase, startExecuteTestCase} from "../../api/testcase"
-import {allProjectServer} from "../../api/project"
-import {ProjectServer} from "../../api/model/project";
 
 export default defineComponent({
   name: "TestCaseList",
@@ -81,10 +72,6 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const projectId = route.params.projectId as unknown as number
-
-    // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
-
-    const testCaseTypes = useTestCaseTypes()
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
@@ -97,10 +84,36 @@ export default defineComponent({
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
+    const testCaseTypes = useTestCaseTypes()
+
+    let projectRequestList: Ref<Array<ProjectRequest>> = ref([])
+
     const showAddTestCaseDialog = ref(false)
     const addNewTestCase = reactive<AddTestCase>({
       name: '',
-      type: ''
+      type: '',
+      projectRequestId: undefined
+    })
+    const addNewTestCaseSelectProjectRequest = ref(false)
+
+    async function clickToOpenAddDialog() {
+      if (projectRequestList.value.length === 0) {
+        const data = await listProjectRequest(projectId)
+        projectRequestList.value = data
+      }
+
+      showAddTestCaseDialog.value = true
+    }
+
+    watch(() => addNewTestCase.type, (newValue, _) => {
+      if (newValue === testCaseTypeReplay || newValue === testCaseTypeBenchmark) {
+        addNewTestCaseSelectProjectRequest.value = true
+      } else {
+        addNewTestCaseSelectProjectRequest.value = false
+
+        // 重置
+        addNewTestCase.projectRequestId = undefined
+      }
     })
 
     async function clickToAdd() {
@@ -110,8 +123,9 @@ export default defineComponent({
       await loadTestCases()
       // 重置
       showAddTestCaseDialog.value = false
-      addNewProjectServer.name = ''
-      addNewProjectServer.type = ''
+      addNewTestCase.name = ''
+      addNewTestCase.type = ''
+      addNewTestCase.projectRequestId = undefined
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -131,26 +145,18 @@ export default defineComponent({
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
-    function openTestCaseRequestList(id: number) {
-      router.push(`/testcase/request/${projectId}/${id}`)
+    function openTestCaseRequestList(id: number, type: string) {
+      // router.push(`/testcase/request/${projectId}/${id}`)
+      router.push({
+        path: `/testcase/request/${projectId}/${id}`,
+        query: {
+          type: type
+        }
+      })
     }
 
     function openTestCaseExecuteList(id: number) {
       router.push(`/testcase/execute/${projectId}/${id}`)
-    }
-
-    // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
-
-    function uploadRequestTemplateSuccess() {
-      ElMessage.success({
-        message: "上传成功"
-      })
-    }
-
-    function uploadRequestTemplateFailed() {
-      ElMessage.error({
-        message: "上传失败，请重试"
-      })
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -181,7 +187,10 @@ export default defineComponent({
 
       showAddTestCaseDialog,
       addNewTestCase,
+      clickToOpenAddDialog,
       clickToAdd,
+      projectRequestList,
+      addNewTestCaseSelectProjectRequest,
 
       clickToDelete,
       clickToUpdate,
@@ -191,9 +200,6 @@ export default defineComponent({
 
       openTestCaseRequestList,
       openTestCaseExecuteList,
-
-      uploadRequestTemplateSuccess,
-      uploadRequestTemplateFailed,
 
       projectServerList,
       showStartExecuteDialog,
