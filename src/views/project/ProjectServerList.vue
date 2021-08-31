@@ -21,8 +21,8 @@
   <div v-else>
     <el-table :data="projectServers" border>
       <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="envName" label="环境名称"></el-table-column>
-      <el-table-column prop="baseUrl" label="地址"></el-table-column>
+      <el-table-column prop="serverName" label="环境名称"></el-table-column>
+      <el-table-column prop="serverAddr" label="地址"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
