@@ -11,7 +11,8 @@
             :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-show="addNewTestCaseSelectProjectRequest" placeholder="请选择关联的请求" v-model="addNewTestCase.projectRequestId">
+      <el-select v-show="addNewTestCaseSelectProjectRequest" placeholder="请选择关联的请求"
+                 v-model="addNewTestCase.projectRequestId">
         <el-option
             v-for="item in projectRequestList"
             :key="item.id"
@@ -38,7 +39,10 @@
       <el-card class="list-item">
         <h4>{{ testCase.name }}</h4>
         {{ testCase.type }} <br/>
-        <el-button icon="el-icon-s-operation" @click="openTestCaseRequestList(testCase.id, testCase.type)">请求配置</el-button>
+        <el-button icon="el-icon-s-operation"
+                   @click="openTestCaseRequestList(testCase.id, testCase.type, testCase.projectRequestId ?? undefined)">
+          请求配置
+        </el-button>
         <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">执行列表</el-button>
 
         <el-popover placement="top" v-model:visible="showStartExecuteDialog">
@@ -145,12 +149,13 @@ export default defineComponent({
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
-    function openTestCaseRequestList(id: number, type: string) {
+    function openTestCaseRequestList(id: number, type: string, projectRequestId?: number) {
       // router.push(`/testcase/request/${projectId}/${id}`)
       router.push({
         path: `/testcase/request/${projectId}/${id}`,
         query: {
-          type: type
+          type: type,
+          projectRequestId: projectRequestId
         }
       })
     }

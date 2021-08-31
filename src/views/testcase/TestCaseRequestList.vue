@@ -19,7 +19,8 @@
     <el-dialog title="新建测试案例请求" v-model="showAddTestCaseRequestDialog">
       <div>
         <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
-        <el-select placeholder="请选择测试案例参数" v-model="addNewTestCaseRequest.request.projectRequestId">
+        <el-select placeholder="请选择测试案例参数" v-model="addNewTestCaseRequest.request.projectRequestId"
+                   :disabled="testCaseType === testCaseTypeBenchmark">
           <el-option
               v-for="item in projectRequestList"
               :key="item.id"
@@ -103,6 +104,7 @@ export default defineComponent({
     const projectId = route.params.projectId as unknown as number
     const testCaseId = route.params.testCaseId as unknown as number
     const testCaseType = route.query.type as unknown as string
+    const projectRequestId = route.query.projectRequestId as unknown as number | undefined
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
@@ -124,7 +126,7 @@ export default defineComponent({
     const addNewTestCaseRequest = reactive<AddTestCaseRequest>({
       request: {
         name: '',
-        projectRequestId: -1,
+        projectRequestId: null,
         param: undefined
       },
       requestExecCheck: [],
@@ -135,7 +137,7 @@ export default defineComponent({
       // 先清空
       addNewTestCaseRequest.requestExecCheck = []
       // 再重新赋值
-      projectRequestList.value.filter(req => req.id === newId)[0].responseFieldValidate?.forEach(field => {
+      projectRequestList.value.find(req => req.id == newId)?.responseFieldValidate?.forEach(field => {
         addNewTestCaseRequest.requestExecCheck?.push({
           projectRequestResponseId: field.id,
           projectRequestResponseFieldName: field.fieldName,
@@ -156,6 +158,12 @@ export default defineComponent({
         // 设置 env 值
         resetProjectEnvVariableList()
       }
+
+      // 如果是 benchmark 类型就不然选择请求
+      if (testCaseType === testCaseTypeBenchmark) {
+        addNewTestCaseRequest.request.projectRequestId = projectRequestId
+      }
+
       showAddTestCaseRequestDialog.value = true
     }
 
@@ -180,7 +188,7 @@ export default defineComponent({
       // 重置
       showAddTestCaseRequestDialog.value = false
       addNewTestCaseRequest.request.name = ''
-      addNewTestCaseRequest.request.projectRequestId = -1
+      addNewTestCaseRequest.request.projectRequestId = null
       addNewTestCaseRequest.request.param = undefined
       addNewTestCaseRequest.requestExecCheck = []
       addNewTestCaseRequest.requestSaveEnvVariable = []
@@ -205,10 +213,13 @@ export default defineComponent({
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
-    function uploadRequestTemplateSuccess() {
+    async function uploadRequestTemplateSuccess() {
       ElMessage.success({
         message: "上传成功"
       })
+
+      // 刷新
+      await loadTestCaseRequest()
     }
 
     function uploadRequestTemplateFailed() {
