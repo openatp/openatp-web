@@ -17,8 +17,8 @@ interface TestCaseRequestMini {
 }
 
 interface TestCaseRequestExecCheckMini {
-    projectRequestResponseId: number
-    projectRequestResponseFieldName?: string // TODO 接口返回数据没有该字段，只是为了界面显示才定义在这里
+    fieldName: string
+    fieldPath: string
     wantResponseFieldValue: string
 }
 

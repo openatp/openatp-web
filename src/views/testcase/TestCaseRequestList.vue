@@ -46,7 +46,7 @@
         <div>
           <span>响应结果验证：</span>
           <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
-                    :placeholder="execCheck.projectRequestResponseFieldName" clearable
+                    :placeholder="execCheck.fieldName" clearable
                     v-model="execCheck.wantResponseFieldValue"></el-input>
         </div>
 
@@ -77,13 +77,13 @@
     <el-table :data="testCaseRequests" border>
       <el-table-column prop="id" label="序号"></el-table-column>
       <el-table-column prop="request.name" label="测试案例请求名称"></el-table-column>
-      <el-table-column prop="request.param" label="测试案例请求参数"></el-table-column>
+      <el-table-column prop="request.arguments" label="测试案例请求参数"></el-table-column>
       <el-table-column prop="request.projectRequestId" label="测试案例请求关联的项目请求"></el-table-column>
       <el-table-column label="响应验证字段">
         <template #default="scope">
           <span v-for="v in scope.row.requestExecCheck">
             <el-tag effect="plain" class="responseFieldValidateTag">{{
-                v.projectRequestResponseId
+                v.fieldName
               }}: {{ v.wantResponseFieldValue }}</el-tag> <br/>
           </span>
         </template>
@@ -161,8 +161,8 @@ export default defineComponent({
       // 再重新赋值
       projectRequestList.value.find(req => req.id == newId)?.responseFieldValidate?.forEach(field => {
         addNewTestCaseRequest.requestExecCheck?.push({
-          projectRequestResponseId: field.id,
-          projectRequestResponseFieldName: field.fieldName,
+          fieldName: field.fieldName,
+          fieldPath: field.fieldPath,
           wantResponseFieldValue: ""
         })
       })

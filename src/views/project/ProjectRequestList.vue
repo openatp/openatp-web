@@ -25,8 +25,8 @@
                   v-model="addNewProjectRequest.request.param"></el-input>
       </div>
       <div>
-        <div v-for="(arg, index) in addNewProjectRequest.arguments">
-          <el-input placeholder="参数名称" clearable v-model="arg"></el-input>
+        <div v-for="(arg, index) in addNewProjectRequestArguments">
+          <el-input placeholder="参数名称" clearable v-model="arg.value"></el-input>
           <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"></el-button>
         </div>
         <el-button type="primary" @click="addArguments">添加参数</el-button>
@@ -90,6 +90,7 @@ import {defineComponent, onMounted, reactive, ref, Ref} from "vue"
 import {useRoute} from "vue-router"
 import {useHttpContentTypes, useHttpMethods} from "../../hooks/use_type"
 import {AddProjectRequest, ProjectRequest} from "../../api/model/project"
+import {OnlyValue} from "../../util/vo"
 import {addProjectRequest, deleteProjectRequest, listProjectRequest} from "../../api/project"
 
 export default defineComponent({
@@ -123,15 +124,16 @@ export default defineComponent({
         timeout: 3000
       },
       responseFieldValidate: [],
-      arguments: []
+      arguments: undefined
     })
+    const addNewProjectRequestArguments: Ref<Array<OnlyValue>> = ref([])
 
     function addArguments() {
-      addNewProjectRequest.arguments?.push("")
+      addNewProjectRequestArguments.value.push(new OnlyValue(""))
     }
 
     function deleteArguments(index: number) {
-      addNewProjectRequest.arguments = addNewProjectRequest.arguments?.filter((item, i, arr) => i != index)
+      addNewProjectRequestArguments.value = addNewProjectRequestArguments.value.filter((item, i, arr) => i != index)
     }
 
     function addResponseFieldValidate() {
@@ -147,6 +149,9 @@ export default defineComponent({
     }
 
     async function clickToAdd() {
+      // 更新 arguments
+      addNewProjectRequest.arguments = addNewProjectRequestArguments.value.map(it => it.value)
+
       await addProjectRequest(projectId, addNewProjectRequest)
 
       // 刷新
@@ -187,6 +192,7 @@ export default defineComponent({
 
       showAddProjectRequestDialog,
       addNewProjectRequest,
+      addNewProjectRequestArguments,
       addArguments,
       deleteArguments,
       addResponseFieldValidate,
