@@ -30,15 +30,28 @@
         </el-select>
         <el-input placeholder="请输入测试案例参数" type="textarea" rows="4" clearable
                   v-model="addNewTestCaseRequest.request.param"></el-input>
+        <el-popover placement="right" width="200" trigger="hover" :content="requestParamTips">
+          <template #reference>
+            <el-button icon="el-icon-info"></el-button>
+          </template>
+        </el-popover>
 
-        <span>响应结果验证：</span>
-        <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
-                  :placeholder="execCheck.projectRequestResponseFieldName" clearable
-                  v-model="execCheck.wantResponseFieldValue"></el-input>
+        <div>
+          <span>响应结果验证：</span>
+          <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
+                    :placeholder="execCheck.projectRequestResponseFieldName" clearable
+                    v-model="execCheck.wantResponseFieldValue"></el-input>
+        </div>
 
-        <span>环境变量赋值：</span>
-        <el-input v-for="env in addNewTestCaseRequest.requestSaveEnvVariable" :placeholder="env.projectEnvVariableName"
-                  clearable v-model="env.projectEnvVariableValuePath"></el-input>
+        <div>
+          <span>环境变量赋值：</span>
+          <div>
+            <el-input v-for="env in addNewTestCaseRequest.requestSaveEnvVariable"
+                      :placeholder="env.projectEnvVariableName"
+                      clearable v-model="env.projectEnvVariableValuePath"></el-input>
+            <el-button icon="el-icon-remove-outline" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
+          </div>
+        </div>
       </div>
       <template #footer>
       <span class="dialog-footer">
@@ -88,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, Ref, watch} from "vue"
+import {defineComponent, onMounted, reactive, ref, Ref, watch, computed} from "vue"
 import {useRoute} from "vue-router"
 import {ElMessage} from 'element-plus'
 import {testCaseTypeReplay, testCaseTypeBenchmark, testCaseTypePipeline} from "../../api/model/type"
@@ -126,7 +139,7 @@ export default defineComponent({
     const addNewTestCaseRequest = reactive<AddTestCaseRequest>({
       request: {
         name: '',
-        projectRequestId: null,
+        projectRequestId: -1,
         param: undefined
       },
       requestExecCheck: [],
@@ -146,6 +159,8 @@ export default defineComponent({
       })
     })
 
+    const requestParamTips = computed(() => projectRequestList.value.find(req => req.id == addNewTestCaseRequest.request.projectRequestId)?.request.param)
+
     async function clickToOpenAddDialog() {
       if (projectRequestList.value.length === 0) {
         const data = await listProjectRequest(projectId)
@@ -154,14 +169,14 @@ export default defineComponent({
       if (projectEnvVariableList.value.length === 0) {
         const data = await allProjectEnvVariable(projectId)
         projectEnvVariableList.value = data
-
-        // 设置 env 值
-        resetProjectEnvVariableList()
       }
 
-      // 如果是 benchmark 类型就不然选择请求
+      // 设置 env 值
+      resetProjectEnvVariableList()
+
+      // 如果是 benchmark 类型就不然让选择请求
       if (testCaseType === testCaseTypeBenchmark) {
-        addNewTestCaseRequest.request.projectRequestId = projectRequestId
+        addNewTestCaseRequest.request.projectRequestId = projectRequestId!!
       }
 
       showAddTestCaseRequestDialog.value = true
@@ -180,6 +195,10 @@ export default defineComponent({
       }))
     }
 
+    function deleteEnv(projectEnvVariableId: number) {
+      addNewTestCaseRequest.requestSaveEnvVariable = addNewTestCaseRequest.requestSaveEnvVariable?.filter(env => env.projectEnvVariableId != projectEnvVariableId)
+    }
+
     async function clickToAdd() {
       await addTestCaseRequest(testCaseId, addNewTestCaseRequest)
 
@@ -188,7 +207,7 @@ export default defineComponent({
       // 重置
       showAddTestCaseRequestDialog.value = false
       addNewTestCaseRequest.request.name = ''
-      addNewTestCaseRequest.request.projectRequestId = null
+      addNewTestCaseRequest.request.projectRequestId = -1
       addNewTestCaseRequest.request.param = undefined
       addNewTestCaseRequest.requestExecCheck = []
       addNewTestCaseRequest.requestSaveEnvVariable = []
@@ -249,6 +268,8 @@ export default defineComponent({
       addNewTestCaseRequest,
       clickToOpenAddDialog,
       clickToAdd,
+      requestParamTips,
+      deleteEnv,
 
       clickToDelete,
       clickToUpdate,
