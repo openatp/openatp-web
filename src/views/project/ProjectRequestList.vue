@@ -25,9 +25,17 @@
                   v-model="addNewProjectRequest.request.param"></el-input>
       </div>
       <div>
-        <div v-for="field in addNewProjectRequest.responseFieldValidate">
-          <el-input placeholder="响应验证字段名称" clearable v-model="field.fieldName"></el-input>
-          <el-input placeholder="响应验证字段path" clearable v-model="field.fieldPath"></el-input>
+        <div v-for="(arg, index) in addNewProjectRequest.arguments">
+          <el-input placeholder="参数名称" clearable v-model="arg"></el-input>
+          <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"></el-button>
+        </div>
+        <el-button type="primary" @click="addArguments">添加参数</el-button>
+      </div>
+      <div>
+        <div v-for="(resp, index) in addNewProjectRequest.responseFieldValidate">
+          <el-input placeholder="响应验证字段名称" clearable v-model="resp.fieldName"/>
+          <el-input placeholder="响应验证字段path" clearable v-model="resp.fieldPath"/>
+          <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"></el-button>
         </div>
         <el-button type="primary" @click="addResponseFieldValidate">添加验证</el-button>
       </div>
@@ -53,10 +61,17 @@
       <el-table-column prop="request.method" label="method"></el-table-column>
       <el-table-column prop="request.contentType" label="content-type"></el-table-column>
       <el-table-column prop="request.param" label="接口参数"></el-table-column>
+      <el-table-column label="参数">
+        <template #default="scope">
+          <span v-for="v in scope.row.arguments">
+            <el-tag effect="plain" class="responseFieldValidateTag">{{ v }}</el-tag> <br/>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="响应验证字段">
         <template #default="scope">
           <span v-for="v in scope.row.responseFieldValidate">
-            <el-tag effect="plain" class="responseFieldValidateTag">{{ v.fieldName }}: {{ v.fieldPath }}</el-tag> <br />
+            <el-tag effect="plain" class="responseFieldValidateTag">{{ v.fieldName }}: {{ v.fieldPath }}</el-tag> <br/>
           </span>
         </template>
       </el-table-column>
@@ -107,14 +122,28 @@ export default defineComponent({
         header: undefined,
         timeout: 3000
       },
-      responseFieldValidate: []
+      responseFieldValidate: [],
+      arguments: []
     })
+
+    function addArguments() {
+      addNewProjectRequest.arguments?.push("")
+    }
+
+    function deleteArguments(index: number) {
+      addNewProjectRequest.arguments = addNewProjectRequest.arguments?.filter((item, i, arr) => i != index)
+    }
 
     function addResponseFieldValidate() {
       addNewProjectRequest.responseFieldValidate?.push({
+        id: -1,
         fieldName: '',
         fieldPath: ''
       })
+    }
+
+    function deleteResponseFieldValidate(index: number) {
+      addNewProjectRequest.responseFieldValidate = addNewProjectRequest.responseFieldValidate?.filter((item, i, arr) => i != index)
     }
 
     async function clickToAdd() {
@@ -158,7 +187,10 @@ export default defineComponent({
 
       showAddProjectRequestDialog,
       addNewProjectRequest,
+      addArguments,
+      deleteArguments,
       addResponseFieldValidate,
+      deleteResponseFieldValidate,
       clickToAdd,
 
       clickToDelete,

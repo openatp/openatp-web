@@ -29,7 +29,7 @@
           </el-option>
         </el-select>
         <el-input placeholder="请输入测试案例参数" type="textarea" rows="4" clearable
-                  v-model="addNewTestCaseRequest.request.param"></el-input>
+                  v-model="addNewTestCaseRequest.request.arguments"></el-input>
         <el-popover placement="right" width="200" trigger="hover" :content="requestParamTips">
           <template #reference>
             <el-button icon="el-icon-info"></el-button>
@@ -140,7 +140,7 @@ export default defineComponent({
       request: {
         name: '',
         projectRequestId: -1,
-        param: undefined
+        arguments: undefined
       },
       requestExecCheck: [],
       requestSaveEnvVariable: []
@@ -208,7 +208,7 @@ export default defineComponent({
       showAddTestCaseRequestDialog.value = false
       addNewTestCaseRequest.request.name = ''
       addNewTestCaseRequest.request.projectRequestId = -1
-      addNewTestCaseRequest.request.param = undefined
+      addNewTestCaseRequest.request.arguments = undefined
       addNewTestCaseRequest.requestExecCheck = []
       addNewTestCaseRequest.requestSaveEnvVariable = []
 

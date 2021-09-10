@@ -50,6 +50,7 @@ interface ProjectRequestResponseMini {
 interface AddProjectRequest {
     request: ProjectRequestMini
     responseFieldValidate?: Array<ProjectRequestResponseMini>
+    arguments?: Array<string>
 }
 
 interface ProjectRequest extends AddProjectRequest {
