@@ -28,8 +28,15 @@
               :value="item.id">
           </el-option>
         </el-select>
-        <el-input placeholder="请输入测试案例参数" type="textarea" rows="4" clearable
-                  v-model="addNewTestCaseRequest.request.arguments"></el-input>
+
+        <div>
+          <span>参数：</span>
+          <div>
+            <el-input v-for="arg in addNewTestCaseRequestArguments.entries()"
+                      :placeholder="arg[0]"
+                      clearable v-model="arg[1]"></el-input>
+          </div>
+        </div>
         <el-popover placement="right" width="200" trigger="hover" :content="requestParamTips">
           <template #reference>
             <el-button icon="el-icon-info"></el-button>
@@ -145,8 +152,10 @@ export default defineComponent({
       requestExecCheck: [],
       requestSaveEnvVariable: []
     })
+    const addNewTestCaseRequestArguments: Ref<Map<string, string>> = ref(new Map())
 
     watch(() => addNewTestCaseRequest.request.projectRequestId, (newId, _) => {
+      // part 1 同步修改 requestExecCheck
       // 先清空
       addNewTestCaseRequest.requestExecCheck = []
       // 再重新赋值
@@ -157,6 +166,14 @@ export default defineComponent({
           wantResponseFieldValue: ""
         })
       })
+
+      // part 1 同步修改 requestExecCheck
+      // 先清空
+      addNewTestCaseRequestArguments.value = new Map()
+      // 再重新赋值
+      projectRequestList.value.find(req => req.id == newId)?.arguments?.forEach(arg =>
+          addNewTestCaseRequestArguments.value.set(arg, "")
+      )
     })
 
     const requestParamTips = computed(() => projectRequestList.value.find(req => req.id == addNewTestCaseRequest.request.projectRequestId)?.request.param)
@@ -200,6 +217,9 @@ export default defineComponent({
     }
 
     async function clickToAdd() {
+      // 更新 arguments
+      addNewTestCaseRequest.request.arguments = JSON.stringify(addNewTestCaseRequestArguments)
+
       await addTestCaseRequest(testCaseId, addNewTestCaseRequest)
 
       // 刷新
@@ -266,6 +286,7 @@ export default defineComponent({
 
       showAddTestCaseRequestDialog,
       addNewTestCaseRequest,
+      addNewTestCaseRequestArguments,
       clickToOpenAddDialog,
       clickToAdd,
       requestParamTips,

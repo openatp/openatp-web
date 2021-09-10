@@ -13,7 +13,7 @@ interface TestCase extends AddTestCase {
 interface TestCaseRequestMini {
     name: string
     projectRequestId: number
-    param?: string
+    arguments?: string
 }
 
 interface TestCaseRequestExecCheckMini {
