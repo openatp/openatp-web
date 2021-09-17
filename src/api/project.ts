@@ -8,7 +8,9 @@ import {
     AddProjectRequest,
     ProjectRequest,
     AddProjectServer,
-    ProjectServer
+    ProjectServer,
+    ProjectRequestPreExecRequest,
+    ProjectRequestPreExecResponse
 } from './model/project'
 
 async function addProject(req: AddProject): Promise<boolean> {
@@ -107,6 +109,13 @@ async function detailProjectRequest(id: number): Promise<ProjectRequest> {
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+async function preExecProjectRequest(projectId: number, projectServerId: number, req: ProjectRequestPreExecRequest): Promise<ProjectRequestPreExecResponse> {
+    const resp = await request.post(`/api/project/request/v1/pre_exec/${projectId}/${projectServerId}`, req)
+    return resp.data.data as ProjectRequestPreExecResponse
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
 export {
@@ -129,4 +138,6 @@ export {
     deleteProjectRequest,
     // updateProjectRequest,
     listProjectRequest,
+
+    preExecProjectRequest,
 }

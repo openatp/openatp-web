@@ -45,12 +45,12 @@
         </el-button>
         <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">执行列表</el-button>
 
-        <el-popover placement="top" v-model:visible="showStartExecuteDialog">
+        <el-popover placement="top" :visible="testCase.id === toExecuteTestCaseId">
           <el-button type="primary" v-for="server in projectServerList" @click="startExecute(testCase.id, server.id)">
             {{ server.serverName }}
           </el-button>
           <template #reference>
-            <el-button type="warning" icon="el-icon-video-play" @click="showStartExecuteDialog = true">开始执行</el-button>
+            <el-button type="warning" icon="el-icon-video-play" @click="toExecuteTestCaseId = testCase.id">开始执行</el-button>
           </template>
         </el-popover>
 
@@ -173,7 +173,7 @@ export default defineComponent({
       projectServerList.value = data
     }
 
-    const showStartExecuteDialog = ref(false)
+    const toExecuteTestCaseId = ref(-1)
 
     async function startExecute(id: number, projectServerId: number) {
       await startExecuteTestCase(projectId, projectServerId, id)
@@ -207,7 +207,7 @@ export default defineComponent({
       openTestCaseExecuteList,
 
       projectServerList,
-      showStartExecuteDialog,
+      toExecuteTestCaseId,
       startExecute
     }
   }

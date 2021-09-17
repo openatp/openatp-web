@@ -25,6 +25,9 @@
       <el-table-column label="操作">
         <template #default="scope">
           <el-button @click="clickToShowDetail(scope.row.id)">查看详情</el-button>
+          <a :href="`/api/testcase/execute/v1/export/excel/${scope.row.id}`">
+            <el-button icon="el-icon-download">下载</el-button>
+          </a>
         </template>
       </el-table-column>
     </el-table>

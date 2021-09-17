@@ -58,6 +58,19 @@ interface ProjectRequest extends AddProjectRequest {
 }
 
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+
+interface ProjectRequestPreExecRequest {
+    request: ProjectRequestMini
+    arguments?: Map<string, string>
+    env?: Map<string, string>
+}
+
+interface ProjectRequestPreExecResponse {
+    request: string
+    response: string
+}
+
+// ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
 export {
@@ -71,5 +84,8 @@ export {
     ProjectEnvVariable,
 
     AddProjectRequest,
-    ProjectRequest
+    ProjectRequest,
+
+    ProjectRequestPreExecRequest,
+    ProjectRequestPreExecResponse
 }
