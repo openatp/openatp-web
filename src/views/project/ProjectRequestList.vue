@@ -55,8 +55,38 @@
     </div>
     <template #footer>
     <span class="dialog-footer">
+      <el-button @click="openPreExecDialog()">测试</el-button>
       <el-button @click="showAddProjectRequestDialog = false">取消</el-button>
       <el-button type="primary" @click="clickToAdd">保存</el-button>
+    </span>
+    </template>
+  </el-dialog>
+
+  <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
+
+  <el-dialog title="测试请求" v-model="showPreExecDialog">
+    <div>
+      <div>
+        <span v-for="arg in preExecArguments">
+          <span>{{ arg.key }}</span><el-input v-model="arg.value"/>
+        </span>
+
+        <el-button v-for="env in projectServerList" @click="clickToPreExec(env.id)">请求目标环境：{{
+            env.serverName
+          }}
+        </el-button>
+      </div>
+      <div>
+        请求体：<br/>
+        {{ preExecResponse.request }}
+        响应体：<br/>
+        {{ preExecResponse.response }}
+      </div>
+
+    </div>
+    <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="showPreExecDialog = false">取消</el-button>
     </span>
     </template>
   </el-dialog>
@@ -98,7 +128,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, Ref} from "vue"
+import {defineComponent, onMounted, reactive, ref, Ref, watch} from "vue"
 import {useRoute} from "vue-router"
 import {useHttpContentTypes, useHttpMethods} from "../../hooks/use_type"
 import {
@@ -153,6 +183,7 @@ export default defineComponent({
 
     // ---  ---
 
+    // form 请求体参数
     const addNewProjectRequestFormParam: Ref<Array<KeyValue>> = ref([])
 
     function addFormParamItem() {
@@ -162,6 +193,14 @@ export default defineComponent({
     function deleteFormParamItem(index: number) {
       addNewProjectRequestFormParam.value = addNewProjectRequestFormParam.value.filter((item, i, arr) => i != index)
     }
+
+    // ---  ---
+
+    // 请求体参数在 json 和 form 之间切换时要清空请求体
+    watch(() => addNewProjectRequest.request.method, (newVal, oldVal) => {
+      addNewProjectRequest.request.param = undefined
+      addNewProjectRequestFormParam.value = []
+    })
 
     // ---  ---
 
@@ -193,12 +232,11 @@ export default defineComponent({
 
     // 是否需要转换一下 param
     // 无论是 http method 是哪种类型 param 都是json格式，所以需要转换
-    function convertParamIfNeed(): string {
-      // 1 更新 param
-      if (addNewProjectRequest.request.param === '' && addNewProjectRequestFormParam.value.length != 0) {
+    function convertParamIfNeed(): string | undefined {
+      if (addNewProjectRequest.request.param === undefined && addNewProjectRequestFormParam.value.length != 0) {
         // 转换 param
         let temp = new Map<string, string>()
-        addNewProjectRequestFormParam.value.forEach(it => temp[it.key] = it.value)
+        addNewProjectRequestFormParam.value.forEach(it => temp.set(it.key, it.value))
         // 更新
         return JSON.stringify(temp)
       } else {
@@ -252,6 +290,49 @@ export default defineComponent({
 
     // ---  ---
 
+    const showPreExecDialog = ref(false)
+
+    const preExecArguments: Ref<Array<KeyValue>> = ref([])
+
+    const preExecResponse = reactive<ProjectRequestPreExecResponse>({
+      request: "",
+      response: ""
+    })
+
+    function openPreExecDialog() {
+      // 先更新 arg
+      preExecArguments.value = []
+      addNewProjectRequestArguments.value.forEach(it => preExecArguments.value.push(new KeyValue(it.value, "")))
+
+      // 再清空请求和响应
+      preExecResponse.request = ''
+      preExecResponse.response = ''
+
+      showPreExecDialog.value = true
+    }
+
+    async function clickToPreExec(projectServerId: number) {
+      // ->1<- 记录 addNewProjectRequest.request.param 是否是 undefined
+      let isParamIsUndefined = addNewProjectRequest.request.param === undefined
+      // 然后才可以更新 param
+      addNewProjectRequest.request.param = convertParamIfNeed()
+
+      let arg = Object.create(null)
+      preExecArguments.value.forEach(it => arg[it.key] = it.value)
+
+      const data = await preExecProjectRequest(projectId, projectServerId, new class implements ProjectRequestPreExecRequest {
+        arguments = JSON.stringify(arg);
+        env = undefined;
+        request = addNewProjectRequest.request;
+      })
+
+      preExecResponse.request = data.request
+      preExecResponse.response = data.response
+
+      // ->2<- 如果 addNewProjectRequest.request.param 是 undefined 则需要还原为 undefined
+      if (isParamIsUndefined) {
+        addNewProjectRequest.request.param = undefined
+      }
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -279,7 +360,12 @@ export default defineComponent({
 
       clickToDelete,
 
+      showPreExecDialog,
+      openPreExecDialog,
       projectServerList,
+      clickToPreExec,
+      preExecArguments,
+      preExecResponse,
 
       httpMethods,
       httpContentTypes
