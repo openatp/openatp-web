@@ -1,21 +1,30 @@
 <template>
-  <div v-if="testCaseType === testCaseTypeReplay">
+  <!--  上传、下载模版区域  -->
+  <div v-if="testCaseType === testCaseTypeReplay" class="text-center my-2.5">
     <a :href="`/api/testcase/replay/request/batch_import/v1/download_template/excel/${testCaseId}`">
       <el-button icon="el-icon-download">下载请求模版</el-button>
     </a>
+
     <el-upload
         :action="`/api/testcase/replay/request/batch_import/v1/upload_file/excel/${testCaseId}`"
         name="file"
         :show-file-list="false"
         limit="1"
         :on-success="uploadRequestTemplateSuccess"
-        :on-error="uploadRequestTemplateFailed">
+        :on-error="uploadRequestTemplateFailed"
+        class="inline-block ml-2.5">
       <el-button icon="el-icon-upload">上传请求模板</el-button>
     </el-upload>
   </div>
+
+  <!--  手动添加请求区域  -->
   <div
       v-else-if="testCaseType===testCaseTypePipeline || (testCaseType === testCaseTypeBenchmark && testCaseRequests.length === 0)">
-    <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例请求</el-button>
+    <!--  新建测试案例请求区域  -->
+    <div class="text-center my-2.5">
+      <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例请求</el-button>
+    </div>
+
     <el-dialog title="新建测试案例请求" v-model="showAddTestCaseRequestDialog">
       <div>
         <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
@@ -68,42 +77,46 @@
       </template>
     </el-dialog>
   </div>
+
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
-  <div v-if="testCaseRequests.length === 0">
-    <span> 什么都没有</span>
-  </div>
-  <div v-else>
-    <el-table :data="testCaseRequests" border>
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="request.name" label="测试案例请求名称"></el-table-column>
-      <el-table-column prop="request.arguments" label="测试案例请求参数"></el-table-column>
-      <el-table-column prop="request.projectRequestId" label="测试案例请求关联的项目请求"></el-table-column>
-      <el-table-column label="响应验证字段">
-        <template #default="scope">
+  <!--  显示数据区域  -->
+  <div>
+    <div v-if="testCaseRequests.length === 0">
+      <el-empty description="什么都没有"></el-empty>
+    </div>
+    <div v-else>
+      <el-table :data="testCaseRequests" border>
+        <el-table-column prop="id" label="序号"></el-table-column>
+        <el-table-column prop="request.name" label="测试案例请求名称"></el-table-column>
+        <el-table-column prop="request.arguments" label="测试案例请求参数"></el-table-column>
+        <el-table-column prop="request.projectRequestId" label="测试案例请求关联的项目请求"></el-table-column>
+        <el-table-column label="响应验证字段">
+          <template #default="scope">
           <span v-for="v in scope.row.requestExecCheck">
             <el-tag effect="plain" class="responseFieldValidateTag">{{
                 v.fieldName
               }}: {{ v.wantResponseFieldValue }}</el-tag> <br/>
           </span>
-        </template>
-      </el-table-column>
-      <el-table-column label="环境变量赋值">
-        <template #default="scope">
+          </template>
+        </el-table-column>
+        <el-table-column label="环境变量赋值">
+          <template #default="scope">
           <span v-for="v in scope.row.requestSaveEnvVariable">
             <el-tag effect="plain" class="responseFieldValidateTag">{{
                 v.projectEnvVariableId
               }}: {{ v.projectEnvVariableValuePath }}</el-tag> <br/>
           </span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
-          <el-button @click="clickToUpdate">更新</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
+            <el-button @click="clickToUpdate">更新</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 

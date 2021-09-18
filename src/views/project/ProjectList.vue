@@ -1,32 +1,45 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="showAddProjectDialog = true">新建项目</el-button>
-  <el-dialog title="新建项目" v-model="showAddProjectDialog">
-    <div>
-      <el-input placeholder="请输入项目名称" clearable v-model="addNewProject.name"></el-input>
-      <el-input placeholder="请输入项目描述" clearable v-model="addNewProject.desc"></el-input>
+  <!--  新建项目区域  -->
+  <div class="text-center my-2.5">
+    <el-button type="primary" icon="el-icon-plus" @click="showAddProjectDialog = true">新建项目</el-button>
+  </div>
+  <el-dialog width="36%" title="新建项目" v-model="showAddProjectDialog">
+    <div class="flex flex-col">
+      <div>
+        项目名称:
+        <el-input class="inline-block" placeholder="请输入项目名称" clearable v-model="addNewProject.name"></el-input>
+      </div>
+      <div>
+        项目描述:
+        <el-input placeholder="请输入项目描述" clearable v-model="addNewProject.desc"></el-input>
+      </div>
     </div>
     <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="showAddProjectDialog = false">取消</el-button>
-      <el-button type="primary" @click="clickToAdd">保存</el-button>
-    </span>
+        <span class="dialog-footer">
+          <el-button @click="showAddProjectDialog = false">取消</el-button>
+          <el-button type="primary" @click="clickToAdd">保存</el-button>
+        </span>
     </template>
   </el-dialog>
 
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
-  <div v-if="projects.length === 0">
-    <span> 什么都没有</span>
-  </div>
-  <div v-else>
-    <div class="list-box" v-for="project in projects" :key="project.id">
-      <el-card class="list-item">
+  <!--  显示数据区域  -->
+  <div>
+    <!--  没有数据  -->
+    <div v-if="projects.length === 0">
+      <el-empty description="什么都没有"></el-empty>
+    </div>
+
+    <!--  有数据  -->
+    <div class="flex flex-row flex-wrap justify-start">
+      <el-card v-for="project in projects" :key="project.id" class="text-center  mx-2.5 my-2.5">
         <h4>{{ project.name }}</h4>
         {{ project.desc }} <br/>
-        <el-button icon="el-icon-cpu" @click="openProjectServer(project.id)">服务器配置</el-button>
-        <el-button icon="el-icon-office-building" @click="openProjectEnvVariable(project.id)">环境变量配置</el-button>
-        <el-button icon="el-icon-s-operation" @click="openProjectRequestList(project.id)">请求配置</el-button>
-        <el-button icon="el-icon-aim" @click="openTestCaseList(project.id)">测试案例列表</el-button>
+        <el-button icon="el-icon-cpu" @click="openProjectServer(project.id)">服务器</el-button>
+        <el-button icon="el-icon-office-building" @click="openProjectEnvVariable(project.id)">环境变量</el-button>
+        <el-button icon="el-icon-aim" @click="openProjectRequestList(project.id)">请求</el-button>
+        <el-button icon="el-icon-s-operation" @click="openTestCaseList(project.id)">测试案例</el-button>
         <el-button type="danger" icon="el-icon-delete" @click="clickToDelete(project.id)"></el-button>
       </el-card>
     </div>
@@ -122,16 +135,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.list-box {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
 
-.list-box .list-item {
-  /*width: 120px;*/
-  margin-left: 12px;
-  margin-right: 12px;
-}
 </style>

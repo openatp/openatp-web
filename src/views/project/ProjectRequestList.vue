@@ -1,5 +1,8 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="showAddProjectRequestDialog = true">新建请求</el-button>
+  <!--  新建请求区域  -->
+  <div class="text-center my-2.5">
+    <el-button type="primary" icon="el-icon-plus" @click="showAddProjectRequestDialog = true">新建请求</el-button>
+  </div>
   <el-dialog title="新建请求" v-model="showAddProjectRequestDialog">
     <div>
       <div>
@@ -64,6 +67,7 @@
 
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
+  <!--  测试请求区域  -->
   <el-dialog title="测试请求" v-model="showPreExecDialog">
     <div>
       <div>
@@ -76,13 +80,14 @@
           }}
         </el-button>
       </div>
-      <div>
+
+      <!--  请求体和响应体显示区域  -->
+      <div v-if="preExecResponse.request !== '' || preExecResponse.response !== ''">
         请求体：<br/>
         {{ preExecResponse.request }}
         响应体：<br/>
         {{ preExecResponse.response }}
       </div>
-
     </div>
     <template #footer>
     <span class="dialog-footer">
@@ -93,37 +98,40 @@
 
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
-  <div v-if="projectRequests.length === 0">
-    <span> 什么都没有</span>
-  </div>
-  <div v-else>
-    <el-table :data="projectRequests" border>
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="request.name" label="接口名称"></el-table-column>
-      <el-table-column prop="request.path" label="接口路径"></el-table-column>
-      <el-table-column prop="request.method" label="method"></el-table-column>
-      <el-table-column prop="request.contentType" label="content-type"></el-table-column>
-      <el-table-column prop="request.param" label="接口参数"></el-table-column>
-      <el-table-column label="参数">
-        <template #default="scope">
+  <!--  显示数据区域  -->
+  <div>
+    <div v-if="projectRequests.length === 0">
+      <el-empty description="什么都没有"></el-empty>
+    </div>
+    <div v-else>
+      <el-table :data="projectRequests" border>
+        <el-table-column prop="id" label="序号"></el-table-column>
+        <el-table-column prop="request.name" label="接口名称"></el-table-column>
+        <el-table-column prop="request.path" label="接口路径"></el-table-column>
+        <el-table-column prop="request.method" label="method"></el-table-column>
+        <el-table-column prop="request.contentType" label="content-type"></el-table-column>
+        <el-table-column prop="request.param" label="接口参数"></el-table-column>
+        <el-table-column label="参数">
+          <template #default="scope">
           <span v-for="v in scope.row.arguments">
             <el-tag effect="plain" class="responseFieldValidateTag">{{ v }}</el-tag> <br/>
           </span>
-        </template>
-      </el-table-column>
-      <el-table-column label="响应验证字段">
-        <template #default="scope">
+          </template>
+        </el-table-column>
+        <el-table-column label="响应验证字段">
+          <template #default="scope">
           <span v-for="v in scope.row.responseFieldValidate">
             <el-tag effect="plain" class="responseFieldValidateTag">{{ v.fieldName }}: {{ v.fieldPath }}</el-tag> <br/>
           </span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 

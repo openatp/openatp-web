@@ -1,5 +1,8 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="showAddProjectServerDialog = true">新建服务器</el-button>
+  <!--  新建服务器区域  -->
+  <div class="text-center my-2.5">
+    <el-button type="primary" icon="el-icon-plus" @click="showAddProjectServerDialog = true">新建服务器</el-button>
+  </div>
   <el-dialog title="新建服务器" v-model="showAddProjectServerDialog">
     <div>
       <el-input placeholder="请输入服务器名称" clearable v-model="addNewProjectServer.serverName"></el-input>
@@ -15,21 +18,24 @@
 
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
-  <div v-if="projectServers.length === 0">
-    <span> 什么都没有</span>
-  </div>
-  <div v-else>
-    <el-table :data="projectServers" border>
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="serverName" label="环境名称"></el-table-column>
-      <el-table-column prop="serverAddr" label="地址"></el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
-          <el-button @click="clickToUpdate">更新</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+  <!--  显示数据区域  -->
+  <div>
+    <div v-if="projectServers.length === 0">
+      <el-empty description="什么都没有"></el-empty>
+    </div>
+    <div v-else>
+      <el-table :data="projectServers" border>
+        <el-table-column prop="id" label="序号"></el-table-column>
+        <el-table-column prop="serverName" label="环境名称"></el-table-column>
+        <el-table-column prop="serverAddr" label="地址"></el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button @click="clickToDelete(scope.row.id)">删除</el-button>
+            <el-button @click="clickToUpdate">更新</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 

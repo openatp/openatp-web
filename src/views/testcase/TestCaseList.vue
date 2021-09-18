@@ -1,5 +1,8 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例</el-button>
+  <!--  新建测试案例区域  -->
+  <div class="text-center my-2.5">
+    <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例</el-button>
+  </div>
   <el-dialog title="新建测试案例" v-model="showAddTestCaseDialog">
     <div>
       <el-input placeholder="请输入测试案例名称" clearable v-model="addNewTestCase.name"></el-input>
@@ -31,29 +34,36 @@
 
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
-  <div v-if="testCases.length === 0">
-    <span> 什么都没有</span>
-  </div>
-  <div v-else>
-    <div class="list-box" v-for="testCase in testCases" :key="testCase.id">
-      <el-card class="list-item">
-        <h4>{{ testCase.name }}</h4>
-        {{ testCase.type }} <br/>
+  <!--  显示数据区域  -->
+  <div>
+    <div v-if="testCases.length === 0">
+      <el-empty description="什么都没有"></el-empty>
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-start">
+      <el-card v-for="testCase in testCases" :key="testCase.id" class="text-center mx-2.5 my-2.5">
+        <h2>{{ testCase.name }}</h2>
+        <div class="my-2.5 p-1 bg-yellow-400 rounded-lg">类型：{{ testCaseTypeDisplayName(testCase.type) }}</div>
+
+        <!--  请求配置按钮  -->
         <el-button icon="el-icon-s-operation"
                    @click="openTestCaseRequestList(testCase.id, testCase.type, testCase.projectRequestId ?? undefined)">
           请求配置
         </el-button>
-        <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">执行列表</el-button>
 
+        <!--  执行列表  -->
+        <el-button icon="el-icon-aim" @click="openTestCaseExecuteList(testCase.id)">执行列表</el-button>
+        <!--  选择要执行的服务器  -->
         <el-popover placement="top" :visible="testCase.id === toExecuteTestCaseId">
           <el-button type="primary" v-for="server in projectServerList" @click="startExecute(testCase.id, server.id)">
             {{ server.serverName }}
           </el-button>
           <template #reference>
-            <el-button type="warning" icon="el-icon-video-play" @click="toExecuteTestCaseId = testCase.id">开始执行</el-button>
+            <el-button type="warning" icon="el-icon-video-play" @click="toExecuteTestCaseId = testCase.id">开始执行
+            </el-button>
           </template>
         </el-popover>
 
+        <!--  删除按钮  -->
         <el-button type="danger" icon="el-icon-delete" @click="clickToDelete(testCase.id)"></el-button>
       </el-card>
     </div>
@@ -64,10 +74,10 @@
 import {defineComponent, onMounted, reactive, ref, Ref, watch} from "vue"
 import {useRoute, useRouter} from "vue-router"
 import {useTestCaseTypes} from "../../hooks/use_type"
-import {testCaseTypeReplay, testCaseTypeBenchmark} from "../../api/model/type"
+import {testCaseTypeReplay, testCaseTypeBenchmark, testCaseTypePipeline} from "../../api/model/type"
 import {ProjectRequest, ProjectServer} from "../../api/model/project";
 import {AddTestCase, TestCase} from "../../api/model/testcase"
-import {allProjectEnvVariable, allProjectServer, listProjectRequest} from "../../api/project"
+import {allProjectServer, listProjectRequest} from "../../api/project"
 import {addTestCase, deleteTestCase, listTestCase, startExecuteTestCase} from "../../api/testcase"
 
 export default defineComponent({
@@ -84,6 +94,19 @@ export default defineComponent({
     async function loadTestCases() {
       const data = await listTestCase(projectId)
       testCases.value = data
+    }
+
+    function testCaseTypeDisplayName(caseType: string): string {
+      switch (caseType) {
+        case testCaseTypeReplay:
+          return "叠放测试"
+        case testCaseTypeBenchmark:
+          return "性能测试"
+        case testCaseTypePipeline:
+          return "顺序测试"
+        default:
+          return "未知类型"
+      }
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -189,6 +212,7 @@ export default defineComponent({
 
     return {
       testCases,
+      testCaseTypeDisplayName,
 
       showAddTestCaseDialog,
       addNewTestCase,

@@ -1,6 +1,6 @@
 <template>
   <div v-if="testCaseExecuteHistories.length === 0">
-    <span> 什么都没有</span>
+    <el-empty description="什么都没有"></el-empty>
   </div>
   <div v-else>
     <el-table :data="testCaseExecuteHistories" border>
