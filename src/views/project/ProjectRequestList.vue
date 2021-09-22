@@ -4,11 +4,16 @@
     <el-button type="primary" icon="el-icon-plus" @click="showAddProjectRequestDialog = true">新建请求</el-button>
   </div>
   <el-dialog title="新建请求" v-model="showAddProjectRequestDialog">
-    <div>
-      <div>
+    <el-form label-width="108px" label-position="left">
+      <el-form-item label="接口名称">
         <el-input placeholder="请输入接口名称" clearable v-model="addNewProjectRequest.request.name"></el-input>
-        <el-input placeholder="请输入接口路径" clearable v-model="addNewProjectRequest.request.path"></el-input>
-        <el-select placeholder="请选择 method" v-model="addNewProjectRequest.request.method">
+      </el-form-item>
+      <el-form-item label="接口路径">
+        <el-input placeholder="请输入接口路径,以/开头" clearable v-model="addNewProjectRequest.request.path"></el-input>
+      </el-form-item>
+      <el-form-item label="Method">
+        <el-select placeholder="请选择 Method"
+                   v-model="addNewProjectRequest.request.method">
           <el-option
               v-for="item in httpMethods"
               :key="item.value"
@@ -16,7 +21,10 @@
               :value="item.value">
           </el-option>
         </el-select>
-        <el-select placeholder="请选择 content-type" v-model="addNewProjectRequest.request.contentType"
+      </el-form-item>
+      <el-form-item label="Content Type">
+        <el-select placeholder="请选择 Content Type"
+                   v-model="addNewProjectRequest.request.contentType"
                    :disabled="addNewProjectRequest.request.method === 'GET'">
           <el-option
               v-for="item in httpContentTypes"
@@ -25,43 +33,72 @@
               :value="item.value">
           </el-option>
         </el-select>
-        <!-- 参数区域 -->
-        <div v-if="addNewProjectRequest.request.method !== 'GET'">
-          <el-input v-if="addNewProjectRequest.request.contentType === 'JSON'" placeholder="请输入接口参数" type="textarea"
-                    rows="4" clearable
-                    v-model="addNewProjectRequest.request.param"></el-input>
-          <div v-else-if="addNewProjectRequest.request.contentType === 'FORM'">
-            <div v-for="(arg, index) in addNewProjectRequestFormParam">
+      </el-form-item>
+
+      <!-- 参数区域 -->
+      <div class="my-2.5">
+        <div v-if="addNewProjectRequest.request.contentType === 'JSON'">
+          <el-form-item label="请求参数">
+            <el-input placeholder="请输入请求参数" type="textarea"
+                      rows="4" clearable
+                      v-model="addNewProjectRequest.request.param"></el-input>
+          </el-form-item>
+        </div>
+        <div v-else-if="addNewProjectRequest.request.contentType === 'FORM'" class="my-2.5">
+          <el-form-item v-for="(arg, index) in addNewProjectRequestFormParam" :label="'请求参数' + index">
+            <el-col>
               <el-input placeholder="参数名称" clearable v-model="arg.key"></el-input>
+            </el-col>
+            <el-col>=</el-col>
+            <el-col>
               <el-input placeholder="参数值" clearable v-model="arg.value"></el-input>
+            </el-col>
+            <el-col>
               <el-button type="danger" icon="el-icon-delete" @click="deleteFormParamItem(index)"></el-button>
-            </div>
-            <el-button type="primary" @click="addFormParamItem">添加参数</el-button>
-          </div>
+            </el-col>
+          </el-form-item>
+          <el-button type="primary" @click="addFormParamItem">添加请求参数</el-button>
         </div>
       </div>
-      <div>
-        <div v-for="(arg, index) in addNewProjectRequestArguments">
-          <el-input placeholder="参数名称" clearable v-model="arg.value"></el-input>
-          <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"></el-button>
-        </div>
-        <el-button type="primary" @click="addArguments">添加参数</el-button>
+
+      <hr/>
+
+      <!--  占位参数  -->
+      <div class="my-2.5">
+        <el-form-item v-for="(arg, index) in addNewProjectRequestArguments" :label="'占位参数'+ index">
+          <el-col>
+            <el-input placeholder="占位参数名称" clearable v-model="arg.value"></el-input>
+          </el-col>
+          <el-col>
+            <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"></el-button>
+          </el-col>
+        </el-form-item>
+        <el-button type="primary" @click="addArguments">添加占位参数</el-button>
       </div>
-      <div>
-        <div v-for="(resp, index) in addNewProjectRequest.responseFieldValidate">
-          <el-input placeholder="响应验证字段名称" clearable v-model="resp.fieldName"/>
-          <el-input placeholder="响应验证字段path" clearable v-model="resp.fieldPath"/>
-          <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"></el-button>
-        </div>
-        <el-button type="primary" @click="addResponseFieldValidate">添加验证</el-button>
+
+      <hr/>
+
+      <!--  响应验证字段  -->
+      <div class="my-2.5">
+        <el-form-item v-for="(resp, index) in addNewProjectRequest.responseFieldValidate" :label="'响应验证字段' + index">
+          <el-col>
+            <el-input placeholder="验证字段名称" clearable v-model="resp.fieldName"/>
+          </el-col>
+          <el-col>:</el-col>
+          <el-col>
+            <el-input placeholder="验证字段jsonpath" clearable v-model="resp.fieldPath"/>
+          </el-col>
+          <el-col>
+            <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"></el-button>
+          </el-col>
+        </el-form-item>
+        <el-button type="primary" @click="addResponseFieldValidate">添加响应验证</el-button>
       </div>
-    </div>
+    </el-form>
     <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="openPreExecDialog()">测试</el-button>
+      <el-button type="warning" @click="openPreExecDialog()">测试</el-button>
       <el-button @click="showAddProjectRequestDialog = false">取消</el-button>
       <el-button type="primary" @click="clickToAdd">保存</el-button>
-    </span>
     </template>
   </el-dialog>
 
@@ -70,15 +107,24 @@
   <!--  测试请求区域  -->
   <el-dialog title="测试请求" v-model="showPreExecDialog">
     <div>
+      <!--  占位参数和请求目标服务器区域  -->
       <div>
-        <span v-for="arg in preExecArguments">
-          <span>{{ arg.key }}</span><el-input v-model="arg.value"/>
-        </span>
-
-        <el-button v-for="env in projectServerList" @click="clickToPreExec(env.id)">请求目标环境：{{
-            env.serverName
-          }}
-        </el-button>
+        <!--  占位参数区域  -->
+        <el-form label-width="88px" label-position="right">
+          <el-form-item v-for="arg in preExecArguments" :label="arg.key">
+            <el-input clearable v-model="arg.value"></el-input>
+          </el-form-item>
+        </el-form>
+        <hr/>
+        <!--  请求目标服务器  -->
+        <div class="mt-2.5">
+          <span v-if="projectServerList.length === 0" class="bg-yellow-400">无可用服务器</span>
+          <div v-else class="flex flex-row flex-wrap justify-center">
+            <el-button v-for="env in projectServerList" @click="clickToPreExec(env.id)">
+              请求 {{ env.serverName }} 服务器
+            </el-button>
+          </div>
+        </div>
       </div>
 
       <!--  请求体和响应体显示区域  -->
@@ -90,9 +136,7 @@
       </div>
     </div>
     <template #footer>
-    <span class="dialog-footer">
       <el-button @click="showPreExecDialog = false">取消</el-button>
-    </span>
     </template>
   </el-dialog>
 
@@ -207,6 +251,12 @@ export default defineComponent({
     // 请求体参数在 json 和 form 之间切换时要清空请求体
     watch(() => addNewProjectRequest.request.method, (newVal, oldVal) => {
       addNewProjectRequest.request.param = undefined
+      if (newVal === 'GET') {
+        addNewProjectRequest.request.contentType = 'FORM'
+      } else {
+        addNewProjectRequest.request.contentType = ''
+      }
+
       addNewProjectRequestFormParam.value = []
     })
 

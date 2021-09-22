@@ -20,61 +20,74 @@
   <!--  手动添加请求区域  -->
   <div
       v-else-if="testCaseType===testCaseTypePipeline || (testCaseType === testCaseTypeBenchmark && testCaseRequests.length === 0)">
-    <!--  新建测试案例请求区域  -->
     <div class="text-center my-2.5">
       <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例请求</el-button>
     </div>
 
     <el-dialog title="新建测试案例请求" v-model="showAddTestCaseRequestDialog">
-      <div>
-        <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
-        <el-select placeholder="请选择测试案例参数" v-model="addNewTestCaseRequest.request.projectRequestId"
-                   :disabled="testCaseType === testCaseTypeBenchmark">
-          <el-option
-              v-for="item in projectRequestList"
-              :key="item.id"
-              :label="item.request.name"
-              :value="item.id">
-          </el-option>
-        </el-select>
+      <el-form label-width="108px" label-position="right">
+        <el-form-item label="请求名称">
+          <el-input placeholder="请输入测试案例请求名称" clearable v-model="addNewTestCaseRequest.request.name"></el-input>
+        </el-form-item>
+        <el-form-item label="关联项目请求">
+          <el-select placeholder="请选择项目请求" v-model="addNewTestCaseRequest.request.projectRequestId"
+                     :disabled="testCaseType === testCaseTypeBenchmark">
+            <el-option
+                v-for="item in projectRequestList"
+                :key="item.id"
+                :label="item.request.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-        <div>
+        <hr/>
+
+        <!--  参数  -->
+        <div class="mt-2.5">
           <span>参数：</span>
           <div>
-            <el-input v-for="arg in addNewTestCaseRequestArguments.entries()"
-                      :placeholder="arg[0]"
-                      clearable v-model="arg[1]"></el-input>
+            <el-form-item v-for="arg in addNewTestCaseRequestArguments.entries()" :label="arg[0]">
+              <el-input clearable v-model="arg[1]"></el-input>
+            </el-form-item>
           </div>
         </div>
-        <el-popover placement="right" width="200" trigger="hover" :content="requestParamTips">
-          <template #reference>
-            <el-button icon="el-icon-info"></el-button>
-          </template>
-        </el-popover>
+        <!--        <el-popover placement="right" width="200" trigger="hover" :content="requestParamTips">-->
+        <!--          <template #reference>-->
+        <!--            <el-button icon="el-icon-info"></el-button>-->
+        <!--          </template>-->
+        <!--        </el-popover>-->
 
-        <div>
+        <hr/>
+
+        <!--  响应结果验证  -->
+        <div class="mt-2.5">
           <span>响应结果验证：</span>
-          <el-input v-for="execCheck in addNewTestCaseRequest.requestExecCheck"
-                    :placeholder="execCheck.fieldName" clearable
-                    v-model="execCheck.wantResponseFieldValue"></el-input>
+          <el-form-item v-for="execCheck in addNewTestCaseRequest.requestExecCheck" :label="execCheck.fieldName">
+            <el-input clearable v-model="execCheck.wantResponseFieldValue"></el-input>
+          </el-form-item>
         </div>
 
-        <div>
+        <hr/>
+
+        <!--  环境变量赋值  -->
+        <div class="mt-2.5">
           <span>环境变量赋值：</span>
-          <div>
-            <div v-for="env in addNewTestCaseRequest.requestSaveEnvVariable">
-              <el-input :placeholder="env.projectEnvVariableName"
-                        clearable v-model="env.projectEnvVariableValuePath"></el-input>
-              <el-button icon="el-icon-remove-outline" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
-            </div>
-          </div>
+          <el-form-item v-for="env in addNewTestCaseRequest.requestSaveEnvVariable"
+                        :key="env.projectEnvVariableName"
+                        :label="env.projectEnvVariableName">
+            <el-col>
+              <el-input clearable v-model="env.projectEnvVariableValuePath"></el-input>
+            </el-col>
+            <el-col>
+              <el-button type="danger" icon="el-icon-delete" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
+            </el-col>
+          </el-form-item>
         </div>
-      </div>
+      </el-form>
       <template #footer>
-      <span class="dialog-footer">
         <el-button @click="showAddTestCaseRequestDialog = false">取消</el-button>
         <el-button type="primary" @click="clickToAdd">保存</el-button>
-      </span>
       </template>
     </el-dialog>
   </div>
@@ -190,7 +203,7 @@ export default defineComponent({
       )
     })
 
-    const requestParamTips = computed(() => projectRequestList.value.find(req => req.id == addNewTestCaseRequest.request.projectRequestId)?.request.param)
+    // const requestParamTips = computed(() => projectRequestList.value.find(req => req.id == addNewTestCaseRequest.request.projectRequestId)?.request.param)
 
     async function clickToOpenAddDialog() {
       if (projectRequestList.value.length === 0) {
@@ -303,7 +316,7 @@ export default defineComponent({
       addNewTestCaseRequestArguments,
       clickToOpenAddDialog,
       clickToAdd,
-      requestParamTips,
+      // requestParamTips,
       deleteEnv,
 
       clickToDelete,
