@@ -1,5 +1,7 @@
 <template>
-  <el-button @click="login">登录</el-button>
+  <div class="text-center mt-2.5">
+    <el-button type="primary" @click="login">登录</el-button>
+  </div>
 </template>
 
 <script lang="ts">
