@@ -3,16 +3,18 @@
   <div class="text-center my-2.5">
     <el-button type="primary" icon="el-icon-plus" @click="showAddProjectServerDialog = true">新建服务器</el-button>
   </div>
-  <el-dialog title="新建服务器" v-model="showAddProjectServerDialog">
-    <div>
-      <el-input placeholder="请输入服务器名称" clearable v-model="addNewProjectServer.serverName"></el-input>
-      <el-input placeholder="请输入服务器地址" clearable v-model="addNewProjectServer.serverAddr"></el-input>
-    </div>
+  <el-dialog width="36%" title="新建服务器" v-model="showAddProjectServerDialog">
+    <el-form label-width="88px" label-position="left">
+      <el-form-item label="服务器名称">
+        <el-input placeholder="请输入服务器名称" clearable v-model="addNewProjectServer.serverName"></el-input>
+      </el-form-item>
+      <el-form-item label="服务器地址">
+        <el-input placeholder="请输入服务器地址" clearable v-model="addNewProjectServer.serverAddr"></el-input>
+      </el-form-item>
+    </el-form>
     <template #footer>
-      <span class="dialog-footer">
         <el-button @click="showAddProjectServerDialog = false">取消</el-button>
         <el-button type="primary" @click="clickToAdd">保存</el-button>
-      </span>
     </template>
   </el-dialog>
 

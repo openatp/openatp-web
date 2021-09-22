@@ -3,16 +3,18 @@
   <div class="text-center my-2.5">
     <el-button type="primary" icon="el-icon-plus" @click="showAddProjectEnvVariableDialog = true">新建环境变量</el-button>
   </div>
-  <el-dialog title="新建环境变量" v-model="showAddProjectEnvVariableDialog">
-    <div>
-      <el-input placeholder="请输入变量名称" clearable v-model="addNewProjectEnvVariable.variableName"></el-input>
-      <el-input placeholder="请输入变量默认值" clearable v-model="addNewProjectEnvVariable.defaultValue"></el-input>
-    </div>
+  <el-dialog width="36%" title="新建环境变量" v-model="showAddProjectEnvVariableDialog">
+    <el-form label-width="88px" label-position="left">
+      <el-form-item label="变量名称">
+        <el-input placeholder="请输入变量名称" clearable v-model="addNewProjectEnvVariable.variableName"></el-input>
+      </el-form-item>
+      <el-form-item label="变量默认值">
+        <el-input placeholder="请输入变量默认值" clearable v-model="addNewProjectEnvVariable.defaultValue"></el-input>
+      </el-form-item>
+    </el-form>
     <template #footer>
-    <span class="dialog-footer">
       <el-button @click="showAddProjectEnvVariableDialog = false">取消</el-button>
       <el-button type="primary" @click="clickToAdd">保存</el-button>
-    </span>
     </template>
   </el-dialog>
 

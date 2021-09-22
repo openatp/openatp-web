@@ -4,21 +4,17 @@
     <el-button type="primary" icon="el-icon-plus" @click="showAddProjectDialog = true">新建项目</el-button>
   </div>
   <el-dialog width="36%" title="新建项目" v-model="showAddProjectDialog">
-    <div class="flex flex-col">
-      <div>
-        项目名称:
-        <el-input class="inline-block" placeholder="请输入项目名称" clearable v-model="addNewProject.name"></el-input>
-      </div>
-      <div>
-        项目描述:
+    <el-form label-width="88px" label-position="left">
+      <el-form-item label="项目名称">
+        <el-input placeholder="请输入项目名称" clearable v-model="addNewProject.name"></el-input>
+      </el-form-item>
+      <el-form-item label="项目描述">
         <el-input placeholder="请输入项目描述" clearable v-model="addNewProject.desc"></el-input>
-      </div>
-    </div>
+      </el-form-item>
+    </el-form>
     <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="showAddProjectDialog = false">取消</el-button>
-          <el-button type="primary" @click="clickToAdd">保存</el-button>
-        </span>
+      <el-button @click="showAddProjectDialog = false">取消</el-button>
+      <el-button type="primary" @click="clickToAdd">保存</el-button>
     </template>
   </el-dialog>
 
@@ -83,6 +79,10 @@ export default defineComponent({
       await loadProjects()
 
       showAddProjectDialog.value = false
+
+      // 重置
+      addNewProject.name = ''
+      addNewProject.desc = ''
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---

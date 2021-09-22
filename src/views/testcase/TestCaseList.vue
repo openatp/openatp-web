@@ -3,32 +3,39 @@
   <div class="text-center my-2.5">
     <el-button type="primary" icon="el-icon-plus" @click="clickToOpenAddDialog">新建测试案例</el-button>
   </div>
-  <el-dialog title="新建测试案例" v-model="showAddTestCaseDialog">
-    <div>
-      <el-input placeholder="请输入测试案例名称" clearable v-model="addNewTestCase.name"></el-input>
-      <el-select placeholder="请选择测试案例类型" v-model="addNewTestCase.type">
-        <el-option
-            v-for="item in testCaseTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
-      <el-select v-show="addNewTestCaseSelectProjectRequest" placeholder="请选择关联的请求"
-                 v-model="addNewTestCase.projectRequestId">
-        <el-option
-            v-for="item in projectRequestList"
-            :key="item.id"
-            :label="item.request.name"
-            :value="item.id">
-        </el-option>
-      </el-select>
-    </div>
+  <el-dialog width="36%" title="新建测试案例" v-model="showAddTestCaseDialog">
+    <el-form label-width="98px" label-position="left">
+      <el-form-item label="测试案例名称">
+        <el-input placeholder="请输入测试案例名称" clearable v-model="addNewTestCase.name"></el-input>
+      </el-form-item>
+      <el-form-item label="测试案例类型">
+        <el-select placeholder="请选择测试案例类型"
+                   v-model="addNewTestCase.type">
+          <el-option
+              v-for="item in testCaseTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="addNewTestCase.type === testCaseTypeReplay || addNewTestCase.type === testCaseTypeBenchmark"
+                    label="关联的请求">
+        <el-select placeholder="请选择关联的请求"
+                   v-show="addNewTestCaseSelectProjectRequest"
+                   v-model="addNewTestCase.projectRequestId">
+          <el-option
+              v-for="item in projectRequestList"
+              :key="item.id"
+              :label="item.request.name"
+              :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="showAddTestCaseDialog = false">取消</el-button>
-        <el-button type="primary" @click="clickToAdd">保存</el-button>
-      </span>
+      <el-button @click="showAddTestCaseDialog = false">取消</el-button>
+      <el-button type="primary" @click="clickToAdd">保存</el-button>
     </template>
   </el-dialog>
 
@@ -226,6 +233,8 @@ export default defineComponent({
 
       testCaseTypes,
       testCaseTypeReplay,
+      testCaseTypePipeline,
+      testCaseTypeBenchmark,
 
       openTestCaseRequestList,
       openTestCaseExecuteList,
