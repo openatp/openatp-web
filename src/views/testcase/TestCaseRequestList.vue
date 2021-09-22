@@ -80,7 +80,8 @@
               <el-input clearable v-model="env.projectEnvVariableValuePath"></el-input>
             </el-col>
             <el-col>
-              <el-button type="danger" icon="el-icon-delete" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" @click="deleteEnv(env.projectEnvVariableId)"
+                         class="ml-2.5"></el-button>
             </el-col>
           </el-form-item>
         </div>
@@ -209,6 +210,11 @@ export default defineComponent({
       if (projectRequestList.value.length === 0) {
         const data = await listProjectRequest(projectId)
         projectRequestList.value = data
+
+        // 都有哪些请求获取成功后就个关联的请求一个初始值
+        if (data.length > 0) {
+          addNewTestCaseRequest.request.projectRequestId = data[0].id
+        }
       }
       if (projectEnvVariableList.value.length === 0) {
         const data = await allProjectEnvVariable(projectId)

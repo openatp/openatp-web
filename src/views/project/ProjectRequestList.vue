@@ -54,7 +54,8 @@
               <el-input placeholder="参数值" clearable v-model="arg.value"></el-input>
             </el-col>
             <el-col>
-              <el-button type="danger" icon="el-icon-delete" @click="deleteFormParamItem(index)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" @click="deleteFormParamItem(index)"
+                         class="ml-2.5"></el-button>
             </el-col>
           </el-form-item>
           <el-button type="primary" @click="addFormParamItem">添加请求参数</el-button>
@@ -70,7 +71,8 @@
             <el-input placeholder="占位参数名称" clearable v-model="arg.value"></el-input>
           </el-col>
           <el-col>
-            <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"></el-button>
+            <el-button type="danger" icon="el-icon-delete" @click="deleteArguments(index)"
+                       class="ml-2.5"></el-button>
           </el-col>
         </el-form-item>
         <el-button type="primary" @click="addArguments">添加占位参数</el-button>
@@ -89,7 +91,8 @@
             <el-input placeholder="验证字段jsonpath" clearable v-model="resp.fieldPath"/>
           </el-col>
           <el-col>
-            <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"></el-button>
+            <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"
+                       class="ml-2.5"></el-button>
           </el-col>
         </el-form-item>
         <el-button type="primary" @click="addResponseFieldValidate">添加响应验证</el-button>
