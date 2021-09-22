@@ -76,7 +76,7 @@ export default defineComponent({
 
     const showDetail = ref(false)
 
-    async function clickToShowDetail(id) {
+    async function clickToShowDetail(id: string) {
       const data = await listTestCaseExecuteDetail(id)
       testCaseExecuteDetails.value = data
 

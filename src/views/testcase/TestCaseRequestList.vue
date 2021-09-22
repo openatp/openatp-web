@@ -62,10 +62,11 @@
         <div>
           <span>环境变量赋值：</span>
           <div>
-            <el-input v-for="env in addNewTestCaseRequest.requestSaveEnvVariable"
-                      :placeholder="env.projectEnvVariableName"
-                      clearable v-model="env.projectEnvVariableValuePath"></el-input>
-            <el-button icon="el-icon-remove-outline" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
+            <div v-for="env in addNewTestCaseRequest.requestSaveEnvVariable">
+              <el-input :placeholder="env.projectEnvVariableName"
+                        clearable v-model="env.projectEnvVariableValuePath"></el-input>
+              <el-button icon="el-icon-remove-outline" @click="deleteEnv(env.projectEnvVariableId)"></el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -266,18 +267,18 @@ export default defineComponent({
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
 
     async function uploadRequestTemplateSuccess() {
-      ElMessage.success({
-        message: "上传成功"
-      })
+      // ElMessage.success({
+      //   message: "上传成功"
+      // })
 
       // 刷新
       await loadTestCaseRequest()
     }
 
     function uploadRequestTemplateFailed() {
-      ElMessage.error({
-        message: "上传失败，请重试"
-      })
+      // ElMessage.error({
+      //   message: "上传失败，请重试"
+      // })
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
