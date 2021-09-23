@@ -296,10 +296,10 @@ export default defineComponent({
     function convertParamIfNeed(): string | undefined {
       if (addNewProjectRequest.request.param === undefined && addNewProjectRequestFormParam.value.length != 0) {
         // 转换 param
-        let temp = new Map<string, string>()
-        addNewProjectRequestFormParam.value.forEach(it => temp.set(it.key, it.value))
+        let param = Object.create(null)
+        addNewProjectRequestFormParam.value.forEach(it => param[it.key] = it.value)
         // 更新
-        return JSON.stringify(temp)
+        return JSON.stringify(param)
       } else {
         return addNewProjectRequest.request.param
       }
