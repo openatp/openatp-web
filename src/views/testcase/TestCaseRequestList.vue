@@ -189,7 +189,9 @@ export default defineComponent({
     // 根据项目请求ID获取项目请求名称
     function parseProjectRequestName(row: TestCaseRequest): string {
       return projectRequestList.value.find(req => req.id = row.request.projectRequestId)?.request?.name
-          ?? (row.request.projectRequestId as string)
+          ?? (row.request.projectRequestId as unknown as string)
+      // 'row.request.projectRequestId  as string' 直接转 string 还不行，会报错
+      // error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
     }
 
     // ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
@@ -276,7 +278,7 @@ export default defineComponent({
 
     async function clickToAdd() {
       // 更新 arguments
-      let arg = new Object(null)
+      let arg = Object.create(null)
       addNewTestCaseRequestArguments.value.forEach(it => {
         arg[it.key] = it.value
       }) // 需要将参数转换为 json 格式
