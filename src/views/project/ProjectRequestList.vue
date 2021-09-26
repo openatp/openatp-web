@@ -84,18 +84,18 @@
       <div class="my-2.5">
         <el-form-item v-for="(resp, index) in addNewProjectRequest.responseFieldValidate" :label="'响应验证字段' + index">
           <el-col>
-            <el-input placeholder="验证字段名称" clearable v-model="resp.fieldName"/>
+            <el-input placeholder="字段名称" clearable v-model="resp.fieldName"/>
           </el-col>
           <el-col>:</el-col>
           <el-col>
-            <el-input placeholder="验证字段jsonpath" clearable v-model="resp.fieldPath"/>
+            <el-input placeholder="字段jsonpath" clearable v-model="resp.fieldPath"/>
           </el-col>
           <el-col>
             <el-button type="danger" icon="el-icon-delete" @click="deleteResponseFieldValidate(index)"
                        class="ml-2.5"></el-button>
           </el-col>
         </el-form-item>
-        <el-button type="primary" @click="addResponseFieldValidate">添加响应验证</el-button>
+        <el-button type="primary" @click="addResponseFieldValidate">添加响应验证字段</el-button>
       </div>
     </el-form>
     <template #footer>
@@ -157,8 +157,8 @@
         <el-table-column prop="request.path" label="接口路径"></el-table-column>
         <el-table-column prop="request.method" label="method"></el-table-column>
         <el-table-column prop="request.contentType" label="content-type"></el-table-column>
-        <el-table-column prop="request.param" label="接口参数"></el-table-column>
-        <el-table-column label="参数">
+        <el-table-column prop="request.param" label="请求参数(显示为json格式)"></el-table-column>
+        <el-table-column label="占位参数">
           <template #default="scope">
           <span v-for="v in scope.row.arguments">
             <el-tag effect="plain" class="responseFieldValidateTag">{{ v }}</el-tag> <br/>
