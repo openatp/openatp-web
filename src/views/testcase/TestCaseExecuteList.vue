@@ -8,19 +8,32 @@
         <el-table-column prop="id" label="序号"></el-table-column>
         <el-table-column prop="executeDatetime" label="执行时间"></el-table-column>
         <el-table-column prop="projectServerName" label="服务器名称"></el-table-column>
-        <el-table-column :formatter="useParseTestCaseExecuteStatus" label="执行状态"></el-table-column>
+        <el-table-column label="执行状态">
+          <template #default="scope">
+            <strong
+                :class="{'text-green-600': scope.row.executeStatus === 2, 'text-red-600': scope.row.executeStatus == 1, }">
+              {{ useParseTestCaseExecuteStatus(scope.row) }}
+            </strong>
+          </template>
+        </el-table-column>
         <el-table-column prop="executeStatusDetail" label="执行状态详情"></el-table-column>
         <el-table-column prop="requestTotalCount" label="总的请求数量"></el-table-column>
         <el-table-column prop="requestSuccessCount" label="请求成功的请求数量"></el-table-column>
-        <el-table-column prop="requestSuccessRate" label="请求成功率">
+        <el-table-column label="请求成功率">
           <template #default="scope">
-            <span>{{ scope.row.requestSuccessRate.toFixed(4) * 100 }}%</span>
+            <strong
+                :class="{'text-green-600': scope.row.requestSuccessRate >= 1, 'text-red-600': scope.row.requestSuccessRate < 1, }">
+              {{ scope.row.requestSuccessRate.toFixed(4) * 100 }}%
+            </strong>
           </template>
         </el-table-column>
         <el-table-column prop="requestCheckCorrectCount" label="验证正确的请求数量"></el-table-column>
-        <el-table-column prop="requestCheckCorrectRate" label="验证正确率">
+        <el-table-column label="验证正确率">
           <template #default="scope">
-            <span>{{ scope.row.requestCheckCorrectRate.toFixed(4) * 100 }}%</span>
+            <strong
+                :class="{'text-green-600': scope.row.requestCheckCorrectRate >= 1, 'text-red-600': scope.row.requestCheckCorrectRate < 1, }">
+              {{ scope.row.requestCheckCorrectRate.toFixed(4) * 100 }}%
+            </strong>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -42,7 +55,14 @@
       <el-table-column prop="testCaseRequestName" label="测试案例请求名称"></el-table-column>
       <el-table-column prop="httpRequest" label="HTTP 请求"></el-table-column>
       <el-table-column prop="httpResponse" label="HTTP 响应"></el-table-column>
-      <el-table-column :formatter="useParseTestCaseCheckResult" label="请求验证结果"></el-table-column>
+      <el-table-column label="请求验证结果"> <!-- :formatter="useParseTestCaseCheckResult" -->
+        <template #default="scope">
+          <strong
+              :class="{'text-green-600': scope.row.execCheckResult === 2, 'text-red-600': scope.row.execCheckResult == 1, }">
+            {{ useParseTestCaseCheckResult(scope.row) }}
+          </strong>
+        </template>
+      </el-table-column>
       <el-table-column prop="execCheckInfo" label="请求验证信息"></el-table-column>
       <el-table-column prop="saveEnvVariableInfo" label="环境变量信息"></el-table-column>
     </el-table>
