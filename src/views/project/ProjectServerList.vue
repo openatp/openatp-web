@@ -21,7 +21,7 @@
   <!-- +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ +++++ -->
 
   <!--  显示数据区域  -->
-  <div>
+  <div class="m-2.5">
     <div v-if="projectServers.length === 0">
       <el-empty description="什么都没有"></el-empty>
     </div>
