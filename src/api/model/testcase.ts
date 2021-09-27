@@ -57,7 +57,9 @@ interface TestCaseExecuteHistory {
 interface TestCaseExecuteDetail {
     testCaseRequestName: string
     httpRequest: string
-    httpResponse: string
+    httpRequestTime: number
+    httpResponseCode: number
+    httpResponseBody: string
     execCheckInfo: string
     execCheckResult: number
     saveEnvVariableInfo: string

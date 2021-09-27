@@ -11,7 +11,7 @@
         <el-table-column label="执行状态">
           <template #default="scope">
             <strong
-                :class="{'text-green-600': scope.row.executeStatus === 2, 'text-red-600': scope.row.executeStatus == 1, }">
+                :class="{'text-green-600': scope.row.executeStatus === 2, 'text-red-600': scope.row.executeStatus === 1 }">
               {{ useParseTestCaseExecuteStatus(scope.row) }}
             </strong>
           </template>
@@ -22,7 +22,7 @@
         <el-table-column label="请求成功率">
           <template #default="scope">
             <strong
-                :class="{'text-green-600': scope.row.requestSuccessRate >= 1, 'text-red-600': scope.row.requestSuccessRate < 1, }">
+                :class="{'text-green-600': scope.row.requestSuccessRate >= 1, 'text-red-600': scope.row.requestSuccessRate < 1 }">
               {{ scope.row.requestSuccessRate.toFixed(4) * 100 }}%
             </strong>
           </template>
@@ -31,7 +31,7 @@
         <el-table-column label="验证正确率">
           <template #default="scope">
             <strong
-                :class="{'text-green-600': scope.row.requestCheckCorrectRate >= 1, 'text-red-600': scope.row.requestCheckCorrectRate < 1, }">
+                :class="{'text-green-600': scope.row.requestCheckCorrectRate >= 1, 'text-red-600': scope.row.requestCheckCorrectRate < 1 }">
               {{ scope.row.requestCheckCorrectRate.toFixed(4) * 100 }}%
             </strong>
           </template>
@@ -52,19 +52,21 @@
 
   <el-dialog title="测试案例执行明细" v-model="showDetail">
     <el-table :data="testCaseExecuteDetails">
-      <el-table-column prop="testCaseRequestName" label="测试案例请求名称"></el-table-column>
+      <el-table-column prop="testCaseRequestName" label="名称"></el-table-column>
       <el-table-column prop="httpRequest" label="HTTP 请求"></el-table-column>
-      <el-table-column prop="httpResponse" label="HTTP 响应"></el-table-column>
-      <el-table-column label="请求验证结果"> <!-- :formatter="useParseTestCaseCheckResult" -->
+      <el-table-column prop="httpRequestTime" label="HTTP 请求耗时(ms)"></el-table-column>
+      <el-table-column prop="httpResponseCode" label="HTTP 响应码"></el-table-column>
+      <el-table-column prop="httpResponseBody" label="HTTP 响应体"></el-table-column>
+      <el-table-column prop="saveEnvVariableInfo" label="环境变量"></el-table-column>
+      <el-table-column prop="execCheckInfo" label="响应字段验证"></el-table-column>
+      <el-table-column label="响应字段验证结果"> <!-- :formatter="useParseTestCaseCheckResult" -->
         <template #default="scope">
           <strong
-              :class="{'text-green-600': scope.row.execCheckResult === 2, 'text-red-600': scope.row.execCheckResult == 1, }">
+              :class="{'text-green-600': scope.row.execCheckResult === 2, 'text-red-600': scope.row.execCheckResult === 1 }">
             {{ useParseTestCaseCheckResult(scope.row) }}
           </strong>
         </template>
       </el-table-column>
-      <el-table-column prop="execCheckInfo" label="请求验证信息"></el-table-column>
-      <el-table-column prop="saveEnvVariableInfo" label="环境变量信息"></el-table-column>
     </el-table>
   </el-dialog>
 </template>
